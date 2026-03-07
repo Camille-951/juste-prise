@@ -1,0 +1,18 @@
+.content {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    height: 64px;
+    background-color: aquamarine;
+    padding-left: 32px;
+    
+    mat-icon {
+        color: green;
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+    }
+    .title {
+        font-size: 32px;
+    }
+}

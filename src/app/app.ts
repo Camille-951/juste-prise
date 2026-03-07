@@ -1,9 +1,10 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Navbar } from "./navbar/navbar";
+import { ObservanceForm } from "./observance-form/observance-form";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [ Navbar, ObservanceForm],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

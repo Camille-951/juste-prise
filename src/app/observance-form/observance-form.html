@@ -1,0 +1,22 @@
+<div class="content">
+<button mat-raised-button (click)="printValues()">test</button>
+    <div class="posologie">
+        <h2 class="title">POSOLOGIE</h2>
+        <div class="dose-number">        
+            <span>Nombre de dosages différents:</span>
+            <input mat-input type="number" [formField]="posologieForm.doseNumber"/>
+        </div>
+
+        <div class="dose-lines">
+            <span class="header">Dosage par unité de traitement (cp/gél...)</span>
+            <span class="header">Nb d'unités par jour</span>
+            @for (line of posologieModel().doseLines; track line.id) {
+                <input mat-input type="number"/>
+                <input mat-input type="number"/>
+            }
+        </div>
+        <div class="rythme">
+            <h3>Rythme des prises</h3>
+        </div>
+    </div>
+</div>

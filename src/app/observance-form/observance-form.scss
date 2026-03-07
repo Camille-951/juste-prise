@@ -1,0 +1,45 @@
+.content {
+    padding: 24px;
+
+    .posologie {
+        display: grid;
+        grid-template-columns: 1fr, 1fr;
+        gap: 12px;
+        grid-template-areas: 
+            'title title'
+            'dose-number .'
+            'dose-lines rythme';
+
+        .title{
+            grid-area: title;
+            background-color: aqua;
+            
+        }
+
+        .dose-number {
+            grid-area: dose-number;
+            display: grid;
+            grid-column: auto auto;
+        }
+
+        .dose-lines {
+            padding: 24px 0;
+            display: grid;
+            grid-template-columns: auto auto;
+            grid-area: dose-lines;
+
+            .header{
+                background-color: antiquewhite;
+                font-weight: 600;
+                text-align: center;
+            }
+        }
+
+        .rythme {
+            grid-area: rythme;
+            h3 {
+                background-color: antiquewhite;
+            }
+        }
+    }
+}
