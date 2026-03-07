@@ -15,9 +15,9 @@ interface DoseLine {
 }
 
 interface Rythme {
-  continu: boolean;
-  traitement?: number;
-  pause?: number;
+  mode: 'continu' | 'discontinu';
+  traitement: number | null;
+  pause: number | null;
   weekEnd: boolean;
 }
 
@@ -33,8 +33,10 @@ export class ObservanceForm {
     doseNumber: 0,
     doseLines: [],
     rythm: {
-      continu: true,
+      mode: 'continu',
       weekEnd: false,
+      traitement: null,
+      pause: null
     }
   });
 
