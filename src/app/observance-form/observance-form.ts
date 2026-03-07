@@ -3,7 +3,7 @@ import { form, FormField } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 
 interface PosologieData {
-  doseNumber: number;
+  doseNumber: number | null;
   doseLines: DoseLine[];
   rythm: Rythme;
 }
@@ -30,7 +30,7 @@ interface Rythme {
 export class ObservanceForm {
 
    posologieModel = signal<PosologieData>({
-    doseNumber: 0,
+    doseNumber: null,
     doseLines: [],
     rythm: {
       mode: 'continu',

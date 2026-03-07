@@ -10,17 +10,17 @@
         </div>
 
         <div class="columns-wrapper">
-            
+
             <div class="dose-lines">
                 <span class="header">Dosage par unité (cp/gél...)</span>
                 <span class="header">Nb d'unités par jour</span>
 
                 @for (line of posologieModel().doseLines; track line.id; let i = $index) {
-                    <div class="input-with-unit">
-                        <input mat-input type="number" [formField]="posologieForm.doseLines[i].dosePerUnit"/>
-                        <span>mg</span>
-                    </div>
-                    <input mat-input type="number" [formField]="posologieForm.doseLines[i].unitPerDay"/>
+                <div class="input-with-unit">
+                    <input mat-input type="number" [formField]="posologieForm.doseLines[i].dosePerUnit" />
+                    <span>mg</span>
+                </div>
+                <input mat-input type="number" [formField]="posologieForm.doseLines[i].unitPerDay" />
                 }
             </div>
 
@@ -33,31 +33,32 @@
                             <input type="radio" id="continu" value="continu" [formField]="posologieForm.rythm.mode" />
                             <label for="continu">Continu (tous les jours)</label>
 
-                            <input type="radio" id="discontinu" value="discontinu" [formField]="posologieForm.rythm.mode" />
+                            <input type="radio" id="discontinu" value="discontinu"
+                                [formField]="posologieForm.rythm.mode" />
                             <label for="discontinu">Discontinu</label>
                         </div>
 
                         <div class="checkbox-group">
-                            <input type="checkbox" id="weekends" [formField]="posologieForm.rythm.weekEnd"/>
+                            <input type="checkbox" id="weekends" [formField]="posologieForm.rythm.weekEnd" />
                             <label for="weekends">Pas de prises le week-end</label>
                         </div>
                     </div>
 
                     <div class="rythme-details">
                         @if (posologieForm.rythm.mode().value() === 'discontinu') {
-                            <div class="input-group">
-                                <label>Jours de traitement :</label>
-                                <input mat-input type="number" [formField]="posologieForm.rythm.traitement" />
-                            </div>
-                            <div class="input-group">
-                                <label>Jours de pause :</label>
-                                <input mat-input type="number" [formField]="posologieForm.rythm.pause" />
-                            </div>
+                        <div class="input-group">
+                            <input mat-input type="number" [formField]="posologieForm.rythm.traitement" />
+                            <label>Jours de traitement, puis</label>
+                        </div>
+                        <div class="input-group">
+                            <input mat-input type="number" [formField]="posologieForm.rythm.pause" />
+                            <label>jours de pause, puis reprise.</label>
+                        </div>
                         }
                     </div>
                 </div>
             </div>
-            
+
         </div>
     </div>
 </div>
