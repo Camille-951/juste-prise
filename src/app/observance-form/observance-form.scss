@@ -130,22 +130,35 @@ input[type="number"] {
             }
         }
     }
-}
 
-@media (max-width: 900px) {
-    .content .posologie .columns-wrapper {
-        grid-template-columns: 1fr;
-        gap: 32px;
-    }
+    .observance {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        max-width: 1200px;
 
-    .content .posologie .rythme .rythme-container {
-        grid-template-columns: 1fr;
-    }
-
-    .content .posologie .rythme .rythme-details {
-        border-left: none;
-        border-top: 2px solid aquamarine;
-        padding-left: 0;
-        padding-top: 16px;
+        .title {
+            background-color: aqua;
+            margin: 32px 0;
+            padding: 8px;
+        }
     }
 }
+
+    @media (max-width: 900px) {
+        .content .posologie .columns-wrapper {
+            grid-template-columns: 1fr;
+            gap: 32px;
+        }
+
+        .content .posologie .rythme .rythme-container {
+            grid-template-columns: 1fr;
+        }
+
+        .content .posologie .rythme .rythme-details {
+            border-left: none;
+            border-top: 2px solid aquamarine;
+            padding-left: 0;
+            padding-top: 16px;
+        }
+    }
