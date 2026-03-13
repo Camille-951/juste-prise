@@ -64,6 +64,58 @@
 
     <div class="observance">
         <h2 class="title">CALCUL D'OBSERVANCE</h2>
+        <div class="dates">
+            <div> <span>Date de dispensation: </span>
+                <mat-form-field>
+                    <input matInput [matDatepicker]="dateDispensation" [formField]="posologieForm.dates.dispensation"
+                        readonly>
+                    <mat-datepicker-toggle matSuffix [for]="dateDispensation"></mat-datepicker-toggle>
+                    <mat-datepicker #dateDispensation></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div> <span>Date de retour: </span>
+                <mat-form-field>
+                    <input matInput [matDatepicker]="dateRetour" [formField]="posologieForm.dates.retour" readonly>
+                    <mat-datepicker-toggle matSuffix [for]="dateRetour"></mat-datepicker-toggle>
+                    <mat-datepicker #dateRetour></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div> <span>Date de début de cycle (si connue): </span>
+                <mat-form-field>
+                    <input matInput [matDatepicker]="dateDebutCycle" [formField]="posologieForm.dates.debutCycle"
+                        readonly>
+                    <mat-datepicker-toggle matSuffix [for]="dateDebutCycle"></mat-datepicker-toggle>
+                    <mat-datepicker #dateDebutCycle></mat-datepicker>
+                </mat-form-field>
+            </div>
+
+        </div>
+        <div class="tableau">
+            @if (posologieModel().doseLines.length > 0) {
+            <div class="table-grid">
+                <span class="header">Dosage par unité de traitement</span>
+                <span class="header">Nb d'unités dispensées</span>
+                <span class="header">Nb d'unités retournées</span>
+                <span class="header">Observance</span>
+
+                @for (line of posologieModel().doseLines; track line.id; let i = $index) {
+                <div class="dosage-display">
+                    {{ line.dosePerUnit || 0 }} mg
+                </div>
+
+                <input mat-input type="number" [formField]="posologieForm.doseLines[i].dispensed" placeholder="0" />
+                <input mat-input type="number" [formField]="posologieForm.doseLines[i].returned" placeholder="0" />
+                <div class="observance-display" [class.alerte]="getObservance(i) || 0 < 0.8">
+                    @if (getObservance(i) !== null) {
+                    {{ getObservance(i) | percent:'1.0-1' }}
+                    } @else {
+                    -
+                    }
+                </div>
+                }
+            </div>
+            }
+        </div>
 
     </div>
 </div>

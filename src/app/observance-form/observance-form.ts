@@ -1,17 +1,29 @@
 import { Component, effect, signal, untracked } from '@angular/core';
 import { form, FormField } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { provideNativeDateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
+import { PercentPipe } from '@angular/common';
 
 interface PosologieData {
   doseNumber: number | null;
   doseLines: DoseLine[];
   rythm: Rythme;
+  dates: {
+    dispensation: Date | null;
+    retour: Date | null;
+    debutCycle: Date | null;
+  }
 }
 
 interface DoseLine {
   id : number;
   dosePerUnit: number;
   unitPerDay: number;
+  dispensed: number | null;
+  returned: number | null;
 }
 
 interface Rythme {
@@ -23,7 +35,8 @@ interface Rythme {
 
 @Component({
   selector: 'app-observance-form',
-  imports: [FormField, MatButtonModule],
+  imports: [FormField, MatButtonModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, PercentPipe],
+  providers: [provideNativeDateAdapter(), { provide: MAT_DATE_LOCALE, useValue: 'fr-FR'}],
   templateUrl: './observance-form.html',
   styleUrl: './observance-form.scss',
 })
@@ -37,6 +50,11 @@ export class ObservanceForm {
       weekEnd: false,
       traitement: null,
       pause: null
+    },
+    dates: {
+      dispensation: null,
+      retour: null,
+      debutCycle: null
     }
   });
 
@@ -61,7 +79,9 @@ export class ObservanceForm {
                 newLines.push({
                   id: Date.now() + i,
                   dosePerUnit: 0,
-                  unitPerDay: 0
+                  unitPerDay: 0,
+                  dispensed: null,
+                  returned: null,
                 });
               }
       }else if (targetNumber < currentLines.length) {
@@ -78,6 +98,28 @@ export class ObservanceForm {
 
   printValues(): void {
     console.log(this.posologieModel());
+  }
+
+  getObservance(index: number): number | null {
+    const model = this.posologieModel();
+    const line = model.doseLines[index];
+    const dates = model.dates;
+
+    if (!dates.dispensation || !dates.retour || line.dispensed === null || line.returned === null || !line.unitPerDay) {
+      return null;
+    }
+
+    // Calcul du nombre de jours entre dispensation et retour
+    const diffTime = dates.retour.getTime() - dates.dispensation.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays <= 0) return null;
+
+    // Calcul de base (continu)
+    const theorique = diffDays * line.unitPerDay;
+    const reelle = line.dispensed - line.returned;
+
+    return reelle / theorique;
   }
   
 }

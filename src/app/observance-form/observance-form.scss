@@ -142,23 +142,87 @@ input[type="number"] {
             margin: 32px 0;
             padding: 8px;
         }
+
+        .dates {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .tableau {
+            margin-top: 16px;
+
+            .table-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+                gap: 12px 16px;
+                align-items: center;
+
+                .header {
+                    background-color: antiquewhite;
+                    font-weight: 600;
+                    text-align: center;
+                    padding: 8px;
+                }
+
+                .dosage-display {
+                    text-align: center;
+                    font-weight: 500;
+                    padding: 10px;
+                    background-color: #f5f5f5;
+                    border-radius: 4px;
+                    border: 1px solid #e0e0e0;
+                }
+
+                input {
+                    min-width: 0;
+                    padding: 10px;
+                    text-align: center;
+                }
+
+                .observance-display {
+                    text-align: center;
+                    font-weight: bold;
+                    font-size: 1.1em;
+                    color: #2e7d32;
+                    /* Vert par défaut si bonne observance */
+
+                    /* Si on ajoute la classe alerte (ex: < 80%) */
+                    &.alerte {
+                        color: #c62828;
+                        /* Rouge */
+                    }
+                }
+            }
+        }
     }
 }
 
-    @media (max-width: 900px) {
-        .content .posologie .columns-wrapper {
-            grid-template-columns: 1fr;
-            gap: 32px;
-        }
+@media (max-width: 900px) {
+    .content .posologie .columns-wrapper {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
 
-        .content .posologie .rythme .rythme-container {
-            grid-template-columns: 1fr;
-        }
+    .content .posologie .rythme .rythme-container {
+        grid-template-columns: 1fr;
+    }
 
-        .content .posologie .rythme .rythme-details {
-            border-left: none;
-            border-top: 2px solid aquamarine;
-            padding-left: 0;
-            padding-top: 16px;
+    .content .posologie .rythme .rythme-details {
+        border-left: none;
+        border-top: 2px solid aquamarine;
+        padding-left: 0;
+        padding-top: 16px;
+    }
+
+    .content .observance .tableau .table-grid {
+        /* Sur petit écran, on passe chaque ligne en bloc vertical pour éviter l'écrasement */
+        grid-template-columns: 1fr;
+        gap: 8px;
+
+        .header {
+            display: none;
+            /* On cache les headers sur mobile pour gagner de la place (optionnel) */
         }
     }
+}
