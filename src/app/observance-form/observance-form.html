@@ -68,14 +68,14 @@
             <div> <span>Date de dispensation: </span>
                 <mat-form-field>
                     <input matInput [matDatepicker]="dateDispensation" [formField]="posologieForm.dates.dispensation"
-                        readonly>
+                        disabled>
                     <mat-datepicker-toggle matSuffix [for]="dateDispensation"></mat-datepicker-toggle>
                     <mat-datepicker #dateDispensation></mat-datepicker>
                 </mat-form-field>
             </div>
             <div> <span>Date de retour: </span>
                 <mat-form-field>
-                    <input matInput [matDatepicker]="dateRetour" [formField]="posologieForm.dates.retour" readonly>
+                    <input matInput [matDatepicker]="dateRetour" [formField]="posologieForm.dates.retour" disabled>
                     <mat-datepicker-toggle matSuffix [for]="dateRetour"></mat-datepicker-toggle>
                     <mat-datepicker #dateRetour></mat-datepicker>
                 </mat-form-field>
@@ -83,7 +83,7 @@
             <div> <span>Date de début de cycle (si connue): </span>
                 <mat-form-field>
                     <input matInput [matDatepicker]="dateDebutCycle" [formField]="posologieForm.dates.debutCycle"
-                        readonly>
+                        disabled>
                     <mat-datepicker-toggle matSuffix [for]="dateDebutCycle"></mat-datepicker-toggle>
                     <mat-datepicker #dateDebutCycle></mat-datepicker>
                 </mat-form-field>
@@ -117,5 +117,37 @@
             }
         </div>
 
+        @if (getCalendarMonths().length > 0) {
+        <div class="calendar-recap">
+            <h3 class="calendar-title">Calendrier des prises</h3>
+
+            <div class="calendar-legend">
+                <span class="legend-item legend-prise">Prise</span>
+                @if (posologieModel().rythm.mode === 'discontinu') {
+                <span class="legend-item legend-pause">Pause</span>
+                }
+                @if (posologieModel().rythm.weekEnd) {
+                <span class="legend-item legend-weekend">Week-end exclu</span>
+                }
+            </div>
+
+            @for (month of getCalendarMonths(); track month.label) {
+            <div class="calendar-month">
+                <span class="month-label">{{ month.label }}</span>
+                <div class="week-headers">
+                    <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+                </div>
+                <div class="calendar-grid">
+                    @for (day of month.days; track day.date.getTime(); let first = $first) {
+                    <div class="day-cell {{ day.status }}"
+                        [style.grid-column-start]="first ? month.firstOffset + 1 : null">
+                        {{ day.date.getDate() }}
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+        }
     </div>
 </div>

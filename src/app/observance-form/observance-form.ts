@@ -7,6 +7,20 @@ import { MatInputModule } from '@angular/material/input';
 import { provideNativeDateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { PercentPipe } from '@angular/common';
 
+type DayStatus = 'prise' | 'pause' | 'weekend';
+
+interface CalendarDay {
+  date: Date;
+  status: DayStatus;
+  isNewMonth: boolean;
+}
+
+interface CalendarMonth {
+  label: string;
+  days: CalendarDay[];
+  firstOffset: number; // 0=lun, 6=dim
+}
+
 interface PosologieData {
   doseNumber: number | null;
   doseLines: DoseLine[];
@@ -20,8 +34,8 @@ interface PosologieData {
 
 interface DoseLine {
   id : number;
-  dosePerUnit: number;
-  unitPerDay: number;
+  dosePerUnit: number | null;
+  unitPerDay: number | null;
   dispensed: number | null;
   returned: number | null;
 }
@@ -78,8 +92,8 @@ export class ObservanceForm {
               for (let i = 0; i < diff; i++) {
                 newLines.push({
                   id: Date.now() + i,
-                  dosePerUnit: 0,
-                  unitPerDay: 0,
+                  dosePerUnit: null,
+                  unitPerDay: null,
                   dispensed: null,
                   returned: null,
                 });
@@ -100,23 +114,135 @@ export class ObservanceForm {
     console.log(this.posologieModel());
   }
 
+  private countTreatmentDays(start: Date, end: Date, rythm: Rythme, cycleStart: Date | null): number {
+    const MS_PER_DAY = 1000 * 60 * 60 * 24;
+    let count = 0;
+
+    const current = new Date(start);
+    current.setHours(0, 0, 0, 0);
+    const endNorm = new Date(end);
+    endNorm.setHours(0, 0, 0, 0);
+
+    const cycleRef = cycleStart ? new Date(cycleStart) : new Date(start);
+    cycleRef.setHours(0, 0, 0, 0);
+
+    while (current < endNorm) {
+      // Exclure les weekends si l'option est cochée
+      const dayOfWeek = current.getDay(); // 0 = dimanche, 6 = samedi
+      if (rythm.weekEnd && (dayOfWeek === 0 || dayOfWeek === 6)) {
+        current.setDate(current.getDate() + 1);
+        continue;
+      }
+
+      // En mode discontinu, vérifier si le jour est dans une phase de traitement
+      if (rythm.mode === 'discontinu' && rythm.traitement !== null && rythm.pause !== null) {
+        const cycleLength = rythm.traitement + rythm.pause;
+        const daysSinceCycleStart = Math.floor((current.getTime() - cycleRef.getTime()) / MS_PER_DAY);
+        const positionInCycle = ((daysSinceCycleStart % cycleLength) + cycleLength) % cycleLength;
+
+        if (positionInCycle >= rythm.traitement) {
+          current.setDate(current.getDate() + 1);
+          continue;
+        }
+      }
+
+      count++;
+      current.setDate(current.getDate() + 1);
+    }
+
+    return count;
+  }
+
+  getCalendarMonths(): CalendarMonth[] {
+    const model = this.posologieModel();
+    const { dispensation, retour, debutCycle } = model.dates;
+    const rythm = model.rythm;
+
+    if (!dispensation || !retour) return [];
+
+    const MS_PER_DAY = 1000 * 60 * 60 * 24;
+    const days: CalendarDay[] = [];
+
+    const current = new Date(dispensation);
+    current.setHours(0, 0, 0, 0);
+    const end = new Date(retour);
+    end.setHours(0, 0, 0, 0);
+
+    const cycleRef = debutCycle ? new Date(debutCycle) : new Date(dispensation);
+    cycleRef.setHours(0, 0, 0, 0);
+
+    let lastMonth = -1;
+
+    while (current < end) {
+      const dayOfWeek = current.getDay();
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+      let status: DayStatus;
+
+      if (rythm.weekEnd && isWeekend) {
+        status = 'weekend';
+      } else if (rythm.mode === 'discontinu' && rythm.traitement !== null && rythm.pause !== null) {
+        const cycleLength = rythm.traitement + rythm.pause;
+        const daysSinceCycleStart = Math.floor((current.getTime() - cycleRef.getTime()) / MS_PER_DAY);
+        const positionInCycle = ((daysSinceCycleStart % cycleLength) + cycleLength) % cycleLength;
+        status = positionInCycle < rythm.traitement ? 'prise' : 'pause';
+      } else {
+        status = 'prise';
+      }
+
+      const currentMonth = current.getMonth();
+      days.push({ date: new Date(current), status, isNewMonth: currentMonth !== lastMonth });
+      lastMonth = currentMonth;
+      current.setDate(current.getDate() + 1);
+    }
+
+    // Grouper par mois
+    const months: CalendarMonth[] = [];
+    let currentMonthDays: CalendarDay[] = [];
+
+    for (const day of days) {
+      if (day.isNewMonth && currentMonthDays.length > 0) {
+        months.push(this.buildCalendarMonth(currentMonthDays));
+        currentMonthDays = [];
+      }
+      currentMonthDays.push(day);
+    }
+    if (currentMonthDays.length > 0) {
+      months.push(this.buildCalendarMonth(currentMonthDays));
+    }
+
+    return months;
+  }
+
+  private buildCalendarMonth(days: CalendarDay[]): CalendarMonth {
+    const firstDate = days[0].date;
+    return {
+      label: firstDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }),
+      days,
+      firstOffset: (firstDate.getDay() + 6) % 7, // lun=0, dim=6
+    };
+  }
+
   getObservance(index: number): number | null {
     const model = this.posologieModel();
     const line = model.doseLines[index];
     const dates = model.dates;
+    const rythm = model.rythm;
 
     if (!dates.dispensation || !dates.retour || line.dispensed === null || line.returned === null || !line.unitPerDay) {
       return null;
     }
 
-    // Calcul du nombre de jours entre dispensation et retour
-    const diffTime = dates.retour.getTime() - dates.dispensation.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    // En mode discontinu, les jours de traitement et de pause sont requis
+    if (rythm.mode === 'discontinu' && (rythm.traitement === null || rythm.pause === null)) {
+      return null;
+    }
 
-    if (diffDays <= 0) return null;
+    const treatmentDays = this.countTreatmentDays(dates.dispensation, dates.retour, rythm, dates.debutCycle);
 
-    // Calcul de base (continu)
-    const theorique = diffDays * line.unitPerDay;
+    if (treatmentDays <= 0) return null;
+
+    const theorique = treatmentDays * line.unitPerDay;
     const reelle = line.dispensed - line.returned;
 
     return reelle / theorique;
