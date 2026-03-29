@@ -1,4 +1,3 @@
-/*Cacher les flèches des inputs type number */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -42,7 +41,16 @@ input[type="number"] {
         letter-spacing: 1.5px;
     }
 
-    // Styles communs aux inputs bruts (hors mat-form-field)
+    .header {
+        background-color: #83C5BE;
+        color: #006D77;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-align: center;
+        padding: 8px;
+        border-radius: 6px;
+    }
+
     input[type="number"],
     input[type="text"] {
         border: 1.5px solid #83C5BE;
@@ -53,9 +61,7 @@ input[type="number"] {
         transition: border-color 0.15s;
         background: white;
 
-        &:focus {
-            border-color: #006D77;
-        }
+        &:focus { border-color: #006D77; }
     }
 
     .posologie {
@@ -84,43 +90,18 @@ input[type="number"] {
             gap: 10px 16px;
             align-items: center;
 
-            .header {
-                background-color: #83C5BE;
-                color: #006D77;
-                font-weight: 600;
-                font-size: 0.85rem;
-                text-align: center;
-                padding: 8px;
-                border-radius: 6px;
-            }
-
             .input-with-unit {
                 display: flex;
                 align-items: center;
                 gap: 8px;
 
-                input {
-                    flex: 1;
-                    min-width: 0;
-                }
+                input { flex: 1; min-width: 0; }
             }
 
-            > input {
-                min-width: 0;
-            }
+            > input { min-width: 0; }
         }
 
         .rythme {
-            .header {
-                background-color: #83C5BE;
-                color: #006D77;
-                font-weight: 600;
-                font-size: 0.85rem;
-                text-align: center;
-                padding: 8px;
-                border-radius: 6px;
-            }
-
             .rythme-container {
                 padding: 16px;
                 display: grid;
@@ -137,13 +118,6 @@ input[type="number"] {
                 grid-template-columns: auto 1fr;
                 gap: 12px 8px;
                 align-items: center;
-            }
-
-            .checkbox-group {
-                margin-top: 24px;
-                display: flex;
-                align-items: center;
-                gap: 8px;
             }
 
             .rythme-details {
@@ -166,20 +140,13 @@ input[type="number"] {
                         color: #006D77;
                     }
 
-                    input {
-                        width: 50px;
-                        text-align: center;
-                    }
+                    input { width: 50px; text-align: center; }
                 }
             }
         }
     }
 
     .observance {
-
-        .title {
-            margin: 0;
-        }
 
         .dates {
             display: flex;
@@ -212,15 +179,7 @@ input[type="number"] {
                 gap: 10px 16px;
                 align-items: center;
 
-                .header {
-                    background-color: #83C5BE;
-                    color: #006D77;
-                    font-weight: 600;
-                    font-size: 0.85rem;
-                    text-align: center;
-                    padding: 8px;
-                    border-radius: 6px;
-                }
+                .dosage-line { display: contents; }
 
                 .dosage-display {
                     text-align: center;
@@ -232,10 +191,7 @@ input[type="number"] {
                     font-size: 0.9rem;
                 }
 
-                input {
-                    min-width: 0;
-                    text-align: center;
-                }
+                input { min-width: 0; text-align: center; }
 
                 .observance-display {
                     text-align: center;
@@ -243,9 +199,7 @@ input[type="number"] {
                     font-size: 1.1em;
                     color: #006D77;
 
-                    &.alerte {
-                        color: #E29578;
-                    }
+                    &.alerte { color: #E29578; }
                 }
             }
         }
@@ -286,7 +240,6 @@ input[type="number"] {
 
                     &.legend-prise::before { background: #83C5BE; }
                     &.legend-pause::before { background: #FFDDD2; }
-                    // &.legend-weekend::before { background: #e0e0e0; }
                 }
             }
 
@@ -297,7 +250,6 @@ input[type="number"] {
             }
 
             .calendar-month {
-
                 .month-label {
                     display: block;
                     font-size: 0.85rem;
@@ -332,9 +284,8 @@ input[type="number"] {
                     font-size: 0.8rem;
                     font-weight: 500;
 
-                    &.prise   { background: #83C5BE; color: #006D77; }
-                    &.pause   { background: #FFDDD2; color: #E29578; }
-                    // &.weekend { background: #e0e0e0; color: #9e9e9e; }
+                    &.prise { background: #83C5BE; color: #006D77; }
+                    &.pause { background: #FFDDD2; color: #E29578; }
                 }
             }
         }
@@ -357,9 +308,7 @@ input[type="number"] {
         padding-left: 0;
         padding-top: 16px;
 
-        &.continu {
-            display: none;
-        }
+        &.continu { display: none; }
     }
 
     .content .observance .tableau .table-grid {
@@ -368,24 +317,21 @@ input[type="number"] {
         gap: 10px;
 
         .header { display: none; }
-
         .input-label { display: block; }
 
         .dosage-line {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            grid-template-areas:
-                "dosage observance"
-                "dispensed returned";
+            grid-template-areas: "dosage observance" "dispensed returned";
             gap: 8px;
             background: #EDF6F9;
             border-radius: 8px;
             padding: 12px;
 
-            .dosage-display      { grid-area: dosage; }
+            .dosage-display          { grid-area: dosage; }
             .input-labeled.dispensed { grid-area: dispensed; }
             .input-labeled.returned  { grid-area: returned; }
-            .observance-display  { grid-area: observance; }
+            .observance-display      { grid-area: observance; }
 
             .input-labeled {
                 display: flex;
@@ -409,14 +355,10 @@ input[type="number"] {
 }
 
 @media (max-width: 600px) {
-    .content {
-        padding: 12px;
-    }
+    .content { padding: 12px; }
 
     .content .posologie,
-    .content .observance {
-        padding: 16px;
-    }
+    .content .observance { padding: 16px; }
 
     .content .posologie .dose-number {
         gap: 8px;
@@ -426,10 +368,7 @@ input[type="number"] {
         border-radius: 8px;
         padding: 10px 14px;
 
-        span {
-            flex: 1 1 100%;
-            text-align: center;
-        }
+        span { flex: 1 1 100%; text-align: center; }
 
         input {
             width: 60px !important;
@@ -440,16 +379,11 @@ input[type="number"] {
     }
 
     .content .posologie .dose-lines {
-        grid-template-columns: 150px 120px;
+        grid-template-columns: minmax(150px, 1fr) minmax(120px, 1fr);
         gap: 8px 12px;
 
-        .header {
-            font-size: 0.75rem;
-        }
-
-        input {
-            width: 70px;
-        }
+        .header { font-size: 0.75rem; }
+        input { width: 70px; justify-self: center; }
     }
 
     .content .observance .dates {
@@ -461,14 +395,10 @@ input[type="number"] {
             align-items: flex-start;
             gap: 4px;
 
-            span {
-                font-size: 0.8rem;
-            }
+            span { font-size: 0.8rem; }
         }
 
-        mat-form-field {
-            width: 160px;
-        }
+        mat-form-field { width: 160px; }
     }
 
     .content .observance .calendar-recap {
