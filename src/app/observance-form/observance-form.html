@@ -1,6 +1,4 @@
 <div class="content">
-    <button mat-raised-button (click)="printValues()">test</button>
-
     <div class="posologie">
         <h2 class="title">POSOLOGIE</h2>
 
@@ -131,6 +129,7 @@
                 } -->
             </div>
 
+            <div class="calendar-months-wrapper">
             @for (month of getCalendarMonths(); track month.label) {
             <div class="calendar-month">
                 <span class="month-label">{{ month.label }}</span>
@@ -147,6 +146,7 @@
                 </div>
             </div>
             }
+            </div>
         </div>
         }
     </div>

@@ -118,9 +118,6 @@ export class ObservanceForm {
     }, {allowSignalWrites: true});
   }
 
-  printValues(): void {
-    console.log(this.posologieModel());
-  }
 
   private countTreatmentDays(start: Date, end: Date, rythm: Rythme): number {
     const MS_PER_DAY = 1000 * 60 * 60 * 24;

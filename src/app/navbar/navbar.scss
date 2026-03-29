@@ -3,16 +3,21 @@
     align-items: center;
     justify-content: left;
     height: 64px;
-    background-color: aquamarine;
+    background-color: #006D77;
     padding-left: 32px;
-    
+    gap: 12px;
+
     mat-icon {
-        color: green;
+        color: #83C5BE;
         font-size: 48px;
         width: 48px;
         height: 48px;
     }
+
     .title {
         font-size: 32px;
+        color: #EDF6F9;
+        font-weight: 600;
+        letter-spacing: 0.5px;
     }
 }
