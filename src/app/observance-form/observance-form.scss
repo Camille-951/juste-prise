@@ -204,6 +204,8 @@ input[type="number"] {
 
         .tableau {
 
+            .input-label { display: none; }
+
             .table-grid {
                 display: grid;
                 grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -354,14 +356,132 @@ input[type="number"] {
         border-top: 2px solid #83C5BE;
         padding-left: 0;
         padding-top: 16px;
+
+        &.continu {
+            display: none;
+        }
     }
 
     .content .observance .tableau .table-grid {
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        .header { display: none; }
+
+        .input-label { display: block; }
+
+        .dosage-line {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-areas:
+                "dosage observance"
+                "dispensed returned";
+            gap: 8px;
+            background: #EDF6F9;
+            border-radius: 8px;
+            padding: 12px;
+
+            .dosage-display      { grid-area: dosage; }
+            .input-labeled.dispensed { grid-area: dispensed; }
+            .input-labeled.returned  { grid-area: returned; }
+            .observance-display  { grid-area: observance; }
+
+            .input-labeled {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+
+                input {
+                    width: 100% !important;
+                    min-width: unset !important;
+                    box-sizing: border-box !important;
+                }
+            }
+
+            .input-label {
+                font-size: 0.7rem;
+                color: #006D77;
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .content {
+        padding: 12px;
+    }
+
+    .content .posologie,
+    .content .observance {
+        padding: 16px;
+    }
+
+    .content .posologie .dose-number {
         gap: 8px;
+        font-size: 0.85rem;
+        flex-wrap: wrap;
+        background: #EDF6F9;
+        border-radius: 8px;
+        padding: 10px 14px;
+
+        span {
+            flex: 1 1 100%;
+            text-align: center;
+        }
+
+        input {
+            width: 60px !important;
+            flex: none !important;
+            min-width: unset !important;
+            margin: 0 auto;
+        }
+    }
+
+    .content .posologie .dose-lines {
+        grid-template-columns: 150px 120px;
+        gap: 8px 12px;
 
         .header {
-            display: none;
+            font-size: 0.75rem;
+        }
+
+        input {
+            width: 70px;
+        }
+    }
+
+    .content .observance .dates {
+        flex-direction: column;
+        gap: 12px;
+
+        div {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+
+            span {
+                font-size: 0.8rem;
+            }
+        }
+
+        mat-form-field {
+            width: 160px;
+        }
+    }
+
+    .content .observance .calendar-recap {
+        .week-headers,
+        .calendar-grid {
+            grid-template-columns: repeat(7, 28px);
+            gap: 2px;
+        }
+
+        .day-cell {
+            width: 28px;
+            height: 28px;
+            font-size: 0.7rem;
         }
     }
 }
