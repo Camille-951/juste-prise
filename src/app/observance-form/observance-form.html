@@ -66,7 +66,7 @@
         <h2 class="title">CALCUL D'OBSERVANCE</h2>
         <div class="dates">
             <div> <span>Date de dispensation: </span>
-                <mat-form-field>
+                <mat-form-field subscriptSizing="dynamic">
                     <input matInput [matDatepicker]="dateDispensation" [formField]="posologieForm.dates.dispensation"
                         disabled>
                     <mat-datepicker-toggle matSuffix [for]="dateDispensation"></mat-datepicker-toggle>
@@ -74,14 +74,14 @@
                 </mat-form-field>
             </div>
             <div> <span>Date de retour: </span>
-                <mat-form-field>
+                <mat-form-field subscriptSizing="dynamic">
                     <input matInput [matDatepicker]="dateRetour" [formField]="posologieForm.dates.retour" disabled>
                     <mat-datepicker-toggle matSuffix [for]="dateRetour"></mat-datepicker-toggle>
                     <mat-datepicker #dateRetour></mat-datepicker>
                 </mat-form-field>
             </div>
             <div> <span>Date de début de cycle (si connue): </span>
-                <mat-form-field>
+                <mat-form-field subscriptSizing="dynamic">
                     <input matInput [matDatepicker]="dateDebutCycle" [formField]="posologieForm.dates.debutCycle"
                         disabled>
                     <mat-datepicker-toggle matSuffix [for]="dateDebutCycle"></mat-datepicker-toggle>

@@ -145,8 +145,21 @@ input[type="number"] {
 
         .dates {
             display: flex;
-            flex-direction: column;
-            gap: 16px;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 16px 32px;
+
+            div {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            mat-form-field {
+                width: 160px;
+                --mat-form-field-container-height: 36px;
+                --mat-form-field-container-vertical-padding: 6px;
+            }
         }
 
         .tableau {

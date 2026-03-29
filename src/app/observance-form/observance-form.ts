@@ -122,7 +122,7 @@ export class ObservanceForm {
     console.log(this.posologieModel());
   }
 
-  private countTreatmentDays(start: Date, end: Date, rythm: Rythme, cycleStart: Date | null): number {
+  private countTreatmentDays(start: Date, end: Date, rythm: Rythme): number {
     const MS_PER_DAY = 1000 * 60 * 60 * 24;
     let count = 0;
 
@@ -131,7 +131,7 @@ export class ObservanceForm {
     const endNorm = new Date(end);
     endNorm.setHours(0, 0, 0, 0);
 
-    const cycleRef = cycleStart ? new Date(cycleStart) : new Date(start);
+    const cycleRef = new Date(start);
     cycleRef.setHours(0, 0, 0, 0);
 
     while (current < endNorm) {
@@ -171,12 +171,13 @@ export class ObservanceForm {
     const MS_PER_DAY = 1000 * 60 * 60 * 24;
     const days: CalendarDay[] = [];
 
-    const current = new Date(dispensation);
+    const start = debutCycle ?? dispensation;
+    const current = new Date(start);
     current.setHours(0, 0, 0, 0);
     const end = new Date(retour);
     end.setHours(0, 0, 0, 0);
 
-    const cycleRef = debutCycle ? new Date(debutCycle) : new Date(dispensation);
+    const cycleRef = new Date(start);
     cycleRef.setHours(0, 0, 0, 0);
 
     let lastMonth = -1;
@@ -247,7 +248,7 @@ export class ObservanceForm {
       return null;
     }
 
-    const treatmentDays = this.countTreatmentDays(dates.dispensation, dates.retour, rythm, dates.debutCycle);
+    const treatmentDays = this.countTreatmentDays(dates.debutCycle ?? dates.dispensation, dates.retour, rythm);
 
     if (treatmentDays <= 0) return null;
 
