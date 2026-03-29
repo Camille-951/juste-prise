@@ -38,10 +38,10 @@
                             <label for="discontinu">Discontinu</label>
                         </div>
 
-                        <div class="checkbox-group">
+                        <!-- <div class="checkbox-group">
                             <input type="checkbox" id="weekends" [formField]="posologieForm.rythm.weekEnd" />
                             <label for="weekends">Pas de prises le week-end</label>
-                        </div>
+                        </div> -->
                     </div>
 
                     <div class="rythme-details">
@@ -126,9 +126,9 @@
                 @if (posologieModel().rythm.mode === 'discontinu') {
                 <span class="legend-item legend-pause">Pause</span>
                 }
-                @if (posologieModel().rythm.weekEnd) {
+                <!-- @if (posologieModel().rythm.weekEnd) {
                 <span class="legend-item legend-weekend">Week-end exclu</span>
-                }
+                } -->
             </div>
 
             @for (month of getCalendarMonths(); track month.label) {

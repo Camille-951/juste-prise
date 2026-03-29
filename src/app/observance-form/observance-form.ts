@@ -4,10 +4,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { provideNativeDateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
+import { NativeDateAdapter, provideNativeDateAdapter, MAT_DATE_LOCALE, DateAdapter } from '@angular/material/core';
 import { PercentPipe } from '@angular/common';
 
-type DayStatus = 'prise' | 'pause' | 'weekend';
+class MondayFirstDateAdapter extends NativeDateAdapter {
+  override getFirstDayOfWeek(): number { return 1; }
+}
+
+type DayStatus = 'prise' | 'pause'; // | 'weekend';
 
 interface CalendarDay {
   date: Date;
@@ -44,13 +48,17 @@ interface Rythme {
   mode: 'continu' | 'discontinu';
   traitement: number | null;
   pause: number | null;
-  weekEnd: boolean;
+  // weekEnd: boolean;
 }
 
 @Component({
   selector: 'app-observance-form',
   imports: [FormField, MatButtonModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, PercentPipe],
-  providers: [provideNativeDateAdapter(), { provide: MAT_DATE_LOCALE, useValue: 'fr-FR'}],
+  providers: [
+    provideNativeDateAdapter(),
+    { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' },
+    { provide: DateAdapter, useClass: MondayFirstDateAdapter },
+  ],
   templateUrl: './observance-form.html',
   styleUrl: './observance-form.scss',
 })
@@ -61,7 +69,7 @@ export class ObservanceForm {
     doseLines: [],
     rythm: {
       mode: 'continu',
-      weekEnd: false,
+      // weekEnd: false,
       traitement: null,
       pause: null
     },
@@ -127,12 +135,12 @@ export class ObservanceForm {
     cycleRef.setHours(0, 0, 0, 0);
 
     while (current < endNorm) {
-      // Exclure les weekends si l'option est cochée
-      const dayOfWeek = current.getDay(); // 0 = dimanche, 6 = samedi
-      if (rythm.weekEnd && (dayOfWeek === 0 || dayOfWeek === 6)) {
-        current.setDate(current.getDate() + 1);
-        continue;
-      }
+      // // Exclure les weekends si l'option est cochée
+      // const dayOfWeek = current.getDay(); // 0 = dimanche, 6 = samedi
+      // if (rythm.weekEnd && (dayOfWeek === 0 || dayOfWeek === 6)) {
+      //   current.setDate(current.getDate() + 1);
+      //   continue;
+      // }
 
       // En mode discontinu, vérifier si le jour est dans une phase de traitement
       if (rythm.mode === 'discontinu' && rythm.traitement !== null && rythm.pause !== null) {
@@ -174,14 +182,15 @@ export class ObservanceForm {
     let lastMonth = -1;
 
     while (current < end) {
-      const dayOfWeek = current.getDay();
-      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+      // const dayOfWeek = current.getDay();
+      // const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
 
       let status: DayStatus;
 
-      if (rythm.weekEnd && isWeekend) {
-        status = 'weekend';
-      } else if (rythm.mode === 'discontinu' && rythm.traitement !== null && rythm.pause !== null) {
+      // if (rythm.weekEnd && isWeekend) {
+      //   status = 'weekend';
+      // } else
+      if (rythm.mode === 'discontinu' && rythm.traitement !== null && rythm.pause !== null) {
         const cycleLength = rythm.traitement + rythm.pause;
         const daysSinceCycleStart = Math.floor((current.getTime() - cycleRef.getTime()) / MS_PER_DAY);
         const positionInCycle = ((daysSinceCycleStart % cycleLength) + cycleLength) % cycleLength;

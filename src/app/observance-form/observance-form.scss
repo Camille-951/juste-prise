@@ -223,7 +223,7 @@ input[type="number"] {
 
                     &.legend-prise::before { background: #a5d6a7; }
                     &.legend-pause::before { background: #ffcc80; }
-                    &.legend-weekend::before { background: #e0e0e0; }
+                    // &.legend-weekend::before { background: #e0e0e0; }
                 }
             }
 
@@ -265,7 +265,7 @@ input[type="number"] {
 
                     &.prise   { background: #a5d6a7; color: #1b5e20; }
                     &.pause   { background: #ffcc80; color: #e65100; }
-                    &.weekend { background: #e0e0e0; color: #9e9e9e; }
+                    // &.weekend { background: #e0e0e0; color: #9e9e9e; }
                 }
             }
         }
