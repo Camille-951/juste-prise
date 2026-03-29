@@ -4,7 +4,7 @@
 
         <div class="dose-number">
             <span>Nombre de dosages différents :</span>
-            <input mat-input type="number" autocomplete="off" [formField]="posologieForm.doseNumber" />
+            <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.doseNumber" />
         </div>
 
         <div class="columns-wrapper">
@@ -15,10 +15,10 @@
 
                 @for (line of posologieModel().doseLines; track line.id; let i = $index) {
                 <div class="input-with-unit">
-                    <input mat-input type="number" autocomplete="off" [formField]="posologieForm.doseLines[i].dosePerUnit" />
+                    <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.doseLines[i].dosePerUnit" />
                     <span>mg</span>
                 </div>
-                <input mat-input type="number" autocomplete="off" [formField]="posologieForm.doseLines[i].unitPerDay" />
+                <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.doseLines[i].unitPerDay" />
                 }
             </div>
 
@@ -45,11 +45,11 @@
                     <div class="rythme-details" [class.continu]="posologieForm.rythm.mode().value() === 'continu'">
                         @if (posologieForm.rythm.mode().value() === 'discontinu') {
                         <div class="input-group">
-                            <input mat-input type="number" autocomplete="off" [formField]="posologieForm.rythm.traitement" />
+                            <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.rythm.traitement" />
                             <label>Jours de traitement, puis</label>
                         </div>
                         <div class="input-group">
-                            <input mat-input type="number" autocomplete="off" [formField]="posologieForm.rythm.pause" />
+                            <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.rythm.pause" />
                             <label>jours de pause, puis reprise.</label>
                         </div>
                         }
@@ -101,11 +101,11 @@
                     <div class="dosage-display">{{ line.dosePerUnit || 0 }} mg</div>
                     <div class="input-labeled dispensed">
                         <span class="input-label">Dispensées</span>
-                        <input mat-input type="number" autocomplete="off" [formField]="posologieForm.doseLines[i].dispensed" placeholder="0" />
+                        <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.doseLines[i].dispensed" placeholder="0" />
                     </div>
                     <div class="input-labeled returned">
                         <span class="input-label">Retournées</span>
-                        <input mat-input type="number" autocomplete="off" [formField]="posologieForm.doseLines[i].returned" placeholder="0" />
+                        <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.doseLines[i].returned" placeholder="0" />
                     </div>
                     <div class="observance-display" [class.alerte]="getObservance(i) || 0 < 0.8">
                         @if (getObservance(i) !== null) {
