@@ -44,14 +44,27 @@
 
                     <div class="rythme-details" [class.continu]="posologieForm.rythm.mode().value() === 'continu'">
                         @if (posologieForm.rythm.mode().value() === 'discontinu') {
-                        <div class="input-group">
-                            <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.rythm.traitement" />
-                            <label>Jours de traitement, puis</label>
+                        @for (seq of posologieModel().rythm.sequences; track seq.id; let i = $index; let last = $last) {
+                        <div class="sequence">
+                            @if (posologieModel().rythm.sequences.length > 1) {
+                            <div class="seq-header">
+                                <span class="seq-label">Séquence {{ i + 1 }}</span>
+                                <button type="button" (click)="removeSequence(i)" class="remove-seq-btn" title="Supprimer">✕</button>
+                            </div>
+                            }
+                            <div class="input-group">
+                                <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.rythm.sequences[i].traitement" />
+                                <label>Jours de traitement, puis</label>
+                            </div>
+                            <div class="input-group">
+                                <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.rythm.sequences[i].pause" />
+                                <label>{{ last ? 'jours de pause, puis reprise.' : 'jours de pause, puis :' }}</label>
+                            </div>
                         </div>
-                        <div class="input-group">
-                            <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.rythm.pause" />
-                            <label>jours de pause, puis reprise.</label>
-                        </div>
+                        }
+                        @if (posologieModel().rythm.sequences.length < 5) {
+                        <button type="button" (click)="addSequence()" class="add-seq-btn">+ Ajouter une séquence</button>
+                        }
                         }
                     </div>
                 </div>
@@ -78,7 +91,7 @@
                     <mat-datepicker #dateRetour></mat-datepicker>
                 </mat-form-field>
             </div>
-            <div> <span>Date de début de cycle: </span>
+            <div> <span>Date de début de cycle (si connue): </span>
                 <mat-form-field subscriptSizing="dynamic">
                     <input matInput [matDatepicker]="dateDebutCycle" [formField]="posologieForm.dates.debutCycle"
                         disabled>
@@ -117,6 +130,15 @@
             </div>
             }
         </div>
+
+        @if (getGlobalObservance() !== null) {
+        <div class="observance-globale">
+            <span class="label">Observance globale :</span>
+            <span class="value" [class.alerte]="(getGlobalObservance() ?? 0) < 0.8">
+                {{ getGlobalObservance() | percent:'1.0-1' }}
+            </span>
+        </div>
+        }
 
         @if (getCalendarMonths().length > 0) {
         <div class="calendar-recap">

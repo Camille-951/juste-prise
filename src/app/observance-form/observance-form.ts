@@ -44,10 +44,15 @@ interface DoseLine {
   returned: number | null;
 }
 
-interface Rythme {
-  mode: 'continu' | 'discontinu';
+interface Sequence {
+  id: number;
   traitement: number | null;
   pause: number | null;
+}
+
+interface Rythme {
+  mode: 'continu' | 'discontinu';
+  sequences: Sequence[];
   // weekEnd: boolean;
 }
 
@@ -70,8 +75,7 @@ export class ObservanceForm {
     rythm: {
       mode: 'continu',
       // weekEnd: false,
-      traitement: null,
-      pause: null
+      sequences: [{ id: 1, traitement: null, pause: null }]
     },
     dates: {
       dispensation: null,
@@ -119,6 +123,22 @@ export class ObservanceForm {
   }
 
 
+  private getStatusInCycle(daysSinceCycleStart: number, sequences: Sequence[]): DayStatus {
+    const totalCycleLength = sequences.reduce((sum, s) => sum + (s.traitement || 0) + (s.pause || 0), 0);
+    if (totalCycleLength === 0) return 'prise';
+    const pos = ((daysSinceCycleStart % totalCycleLength) + totalCycleLength) % totalCycleLength;
+    let offset = 0;
+    for (const seq of sequences) {
+      const t = seq.traitement || 0;
+      const p = seq.pause || 0;
+      if (pos < offset + t) return 'prise';
+      offset += t;
+      if (pos < offset + p) return 'pause';
+      offset += p;
+    }
+    return 'prise';
+  }
+
   private countTreatmentDays(start: Date, end: Date, rythm: Rythme): number {
     const MS_PER_DAY = 1000 * 60 * 60 * 24;
     let count = 0;
@@ -132,20 +152,9 @@ export class ObservanceForm {
     cycleRef.setHours(0, 0, 0, 0);
 
     while (current < endNorm) {
-      // // Exclure les weekends si l'option est cochée
-      // const dayOfWeek = current.getDay(); // 0 = dimanche, 6 = samedi
-      // if (rythm.weekEnd && (dayOfWeek === 0 || dayOfWeek === 6)) {
-      //   current.setDate(current.getDate() + 1);
-      //   continue;
-      // }
-
-      // En mode discontinu, vérifier si le jour est dans une phase de traitement
-      if (rythm.mode === 'discontinu' && rythm.traitement !== null && rythm.pause !== null) {
-        const cycleLength = rythm.traitement + rythm.pause;
+      if (rythm.mode === 'discontinu') {
         const daysSinceCycleStart = Math.floor((current.getTime() - cycleRef.getTime()) / MS_PER_DAY);
-        const positionInCycle = ((daysSinceCycleStart % cycleLength) + cycleLength) % cycleLength;
-
-        if (positionInCycle >= rythm.traitement) {
+        if (this.getStatusInCycle(daysSinceCycleStart, rythm.sequences) !== 'prise') {
           current.setDate(current.getDate() + 1);
           continue;
         }
@@ -188,11 +197,9 @@ export class ObservanceForm {
       // if (rythm.weekEnd && isWeekend) {
       //   status = 'weekend';
       // } else
-      if (rythm.mode === 'discontinu' && rythm.traitement !== null && rythm.pause !== null) {
-        const cycleLength = rythm.traitement + rythm.pause;
+      if (rythm.mode === 'discontinu') {
         const daysSinceCycleStart = Math.floor((current.getTime() - cycleRef.getTime()) / MS_PER_DAY);
-        const positionInCycle = ((daysSinceCycleStart % cycleLength) + cycleLength) % cycleLength;
-        status = positionInCycle < rythm.traitement ? 'prise' : 'pause';
+        status = this.getStatusInCycle(daysSinceCycleStart, rythm.sequences);
       } else {
         status = 'prise';
       }
@@ -230,6 +237,38 @@ export class ObservanceForm {
     };
   }
 
+  getGlobalObservance(): number | null {
+    const model = this.posologieModel();
+    const { dispensation, retour, debutCycle } = model.dates;
+    const rythm = model.rythm;
+    const lines = model.doseLines;
+
+    if (!dispensation || !retour || lines.length === 0) return null;
+
+    if (rythm.mode === 'discontinu' && !rythm.sequences.every(s => s.traitement !== null && s.pause !== null)) {
+      return null;
+    }
+
+    const treatmentDays = this.countTreatmentDays(debutCycle ?? dispensation, retour, rythm);
+    if (treatmentDays <= 0) return null;
+
+    let numerator = 0;
+    let denominator = 0;
+    let hasValidLine = false;
+
+    for (const line of lines) {
+      if (line.dispensed === null || line.returned === null || !line.unitPerDay) continue;
+      const dose = line.dosePerUnit || 1;
+      numerator += dose * (line.dispensed - line.returned);
+      denominator += dose * line.unitPerDay * treatmentDays;
+      hasValidLine = true;
+    }
+
+    if (!hasValidLine || denominator === 0) return null;
+
+    return numerator / denominator;
+  }
+
   getObservance(index: number): number | null {
     const model = this.posologieModel();
     const line = model.doseLines[index];
@@ -240,8 +279,8 @@ export class ObservanceForm {
       return null;
     }
 
-    // En mode discontinu, les jours de traitement et de pause sont requis
-    if (rythm.mode === 'discontinu' && (rythm.traitement === null || rythm.pause === null)) {
+    // En mode discontinu, toutes les séquences doivent être complètes
+    if (rythm.mode === 'discontinu' && !rythm.sequences.every(s => s.traitement !== null && s.pause !== null)) {
       return null;
     }
 
@@ -254,5 +293,25 @@ export class ObservanceForm {
 
     return reelle / theorique;
   }
-  
+
+  addSequence() {
+    this.posologieModel.update(model => ({
+      ...model,
+      rythm: {
+        ...model.rythm,
+        sequences: [...model.rythm.sequences, { id: Date.now(), traitement: null, pause: null }]
+      }
+    }));
+  }
+
+  removeSequence(index: number) {
+    this.posologieModel.update(model => ({
+      ...model,
+      rythm: {
+        ...model.rythm,
+        sequences: model.rythm.sequences.filter((_, i) => i !== index)
+      }
+    }));
+  }
+
 }

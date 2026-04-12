@@ -95,10 +95,10 @@ input[type="number"] {
                 align-items: center;
                 gap: 8px;
 
-                input { flex: 1; min-width: 0; }
+                input { flex: 1; min-width: 0; text-align: center; }
             }
 
-            > input { min-width: 0; }
+            > input { min-width: 0; text-align: center; }
         }
 
         .rythme {
@@ -127,6 +127,57 @@ input[type="number"] {
                 padding-left: 24px;
                 border-left: 2px solid #83C5BE;
                 min-height: 100px;
+
+                .sequence {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+
+                    & + .sequence {
+                        padding-top: 12px;
+                        border-top: 1px dashed #83C5BE;
+                    }
+
+                    .seq-header {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                    }
+
+                    .seq-label {
+                        font-size: 0.8rem;
+                        font-weight: 700;
+                        color: #83C5BE;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                    }
+
+                    .remove-seq-btn {
+                        background: none;
+                        border: none;
+                        cursor: pointer;
+                        color: #E29578;
+                        font-size: 0.75rem;
+                        padding: 2px 6px;
+                        border-radius: 4px;
+                        line-height: 1;
+                        &:hover { background: #FFDDD2; }
+                    }
+                }
+
+                .add-seq-btn {
+                    align-self: flex-start;
+                    background: none;
+                    border: 1.5px dashed #83C5BE;
+                    border-radius: 6px;
+                    color: #006D77;
+                    cursor: pointer;
+                    font-size: 0.8rem;
+                    font-weight: 600;
+                    padding: 6px 12px;
+                    margin-top: 4px;
+                    &:hover { background: #EDF6F9; border-color: #006D77; }
+                }
 
                 .input-group {
                     display: flex;
@@ -193,6 +244,8 @@ input[type="number"] {
 
                 input { min-width: 0; text-align: center; }
 
+                .input-labeled { justify-self: center; }
+
                 .observance-display {
                     text-align: center;
                     font-weight: 700;
@@ -201,6 +254,31 @@ input[type="number"] {
 
                     &.alerte { color: #E29578; }
                 }
+            }
+        }
+
+        .observance-globale {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 16px;
+            padding: 14px 20px;
+            background: #EDF6F9;
+            border-radius: 8px;
+            border-left: 4px solid #006D77;
+
+            .label {
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: #444;
+            }
+
+            .value {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #006D77;
+
+                &.alerte { color: #E29578; }
             }
         }
 
