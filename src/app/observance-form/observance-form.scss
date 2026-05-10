@@ -10,13 +10,21 @@ input[type="number"] {
 }
 
 .content {
-    padding: 32px;
+    padding: 8px;
     background: #EDF6F9;
     min-height: calc(100vh - 64px);
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 24px;
+    gap: 8px;
+
+    .warning {
+        background-color: #E29578;
+        border-radius: 12px;
+        padding: 12px 28px;
+        
+    }
 
     .posologie,
     .observance {
@@ -102,6 +110,10 @@ input[type="number"] {
         }
 
         .rythme {
+            .header {
+                display: block;
+            }
+
             .rythme-container {
                 padding: 16px;
                 display: grid;
@@ -226,7 +238,7 @@ input[type="number"] {
 
             .table-grid {
                 display: grid;
-                grid-template-columns: 1fr 1fr 1fr 1fr;
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
                 gap: 10px 16px;
                 align-items: center;
 
@@ -245,6 +257,16 @@ input[type="number"] {
                 input { min-width: 0; text-align: center; }
 
                 .input-labeled { justify-self: center; }
+
+                .theoretical-display {
+                    text-align: center;
+                    font-weight: 500;
+                    padding: 9px 10px;
+                    background-color: #EDF6F9;
+                    border-radius: 6px;
+                    border: 1.5px solid #83C5BE;
+                    font-size: 0.9rem;
+                }
 
                 .observance-display {
                     text-align: center;
@@ -265,7 +287,6 @@ input[type="number"] {
             padding: 14px 20px;
             background: #EDF6F9;
             border-radius: 8px;
-            border-left: 4px solid #006D77;
 
             .label {
                 font-size: 0.9rem;
@@ -400,7 +421,7 @@ input[type="number"] {
         .dosage-line {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            grid-template-areas: "dosage observance" "dispensed returned";
+            grid-template-areas: "dosage observance" "dispensed returned" "theoretical theoretical";
             gap: 8px;
             background: #EDF6F9;
             border-radius: 8px;
@@ -409,6 +430,7 @@ input[type="number"] {
             .dosage-display          { grid-area: dosage; }
             .input-labeled.dispensed { grid-area: dispensed; }
             .input-labeled.returned  { grid-area: returned; }
+            .theoretical-display     { grid-area: theoretical; }
             .observance-display      { grid-area: observance; }
 
             .input-labeled {

@@ -1,9 +1,10 @@
 <div class="content">
+    <span class="warning">Compléter un nouveau formulaire pour chaque médicament</span>
     <div class="posologie">
         <h2 class="title">POSOLOGIE</h2>
 
         <div class="dose-number">
-            <span>Nombre de dosages différents :</span>
+            <span>Nombre de dosages différents du même médicament :</span>
             <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.doseNumber" />
         </div>
 
@@ -106,6 +107,7 @@
             <div class="table-grid">
                 <span class="header">Dosage par unité de traitement</span>
                 <span class="header">Nb d'unités dispensées</span>
+                <span class="header">Nb théorique d'unités retournées</span>
                 <span class="header">Nb d'unités retournées</span>
                 <span class="header">Observance</span>
 
@@ -115,6 +117,9 @@
                     <div class="input-labeled dispensed">
                         <span class="input-label">Dispensées</span>
                         <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.doseLines[i].dispensed" placeholder="0" />
+                    </div>
+                    <div class="theoretical-display">
+                        @if (getTheoreticalReturned(i) !== null) { {{ getTheoreticalReturned(i) }} } @else { - }
                     </div>
                     <div class="input-labeled returned">
                         <span class="input-label">Retournées</span>
