@@ -2,7 +2,7 @@
 
 Outil de calcul d'observance thérapeutique destiné aux professionnels de santé.
 
-Il permet de saisir une posologie, des dates de dispensation et de retour, puis calcule automatiquement l'observance par dosage et l'observance globale pondérée, avec un calendrier visuel des prises.
+Permet de saisir une posologie, des dates de dispensation et de retour, puis calcule automatiquement l'observance par dosage et l'observance globale pondérée, avec un calendrier visuel des prises.
 
 ---
 

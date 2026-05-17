@@ -7,9 +7,33 @@ import { MatInputModule } from '@angular/material/input';
 import { NativeDateAdapter, provideNativeDateAdapter, MAT_DATE_LOCALE, DateAdapter } from '@angular/material/core';
 import { PercentPipe } from '@angular/common';
 
-/** Forces the calendar week to start on Monday instead of the default Sunday. */
+/** Forces the calendar week to start on Monday instead of the default Sunday.
+ *  Also overrides parse/format to use dd/mm/yyyy instead of the browser-locale-dependent default. */
 class MondayFirstDateAdapter extends NativeDateAdapter {
   override getFirstDayOfWeek(): number { return 1; }
+
+  override parse(value: string): Date | null {
+    if (!value) return null;
+    const digits = value.replace(/\D/g, '');
+    if (digits.length !== 8) return null;
+    const day   = parseInt(digits.slice(0, 2), 10);
+    const month = parseInt(digits.slice(2, 4), 10) - 1;
+    const year  = parseInt(digits.slice(4, 8), 10);
+    const date  = new Date(year, month, day);
+    // Reject invalid dates (e.g. 31/02 rolls over in JS)
+    if (date.getDate() !== day || date.getMonth() !== month || date.getFullYear() !== year) return null;
+    return date;
+  }
+
+  override format(date: Date, displayFormat: object): string {
+    // Calendar headers don't have a 'day' key — use locale formatting for those
+    if (!('day' in displayFormat)) {
+      return date.toLocaleDateString('fr-FR', displayFormat as Intl.DateTimeFormatOptions);
+    }
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    return `${dd}/${mm}/${date.getFullYear()}`;
+  }
 }
 
 /** Whether a given day is an active treatment day or a pause day. */
@@ -76,7 +100,6 @@ interface Rythme {
 })
 export class ObservanceForm {
 
-  /** Single source of truth for the whole form; the reactive form proxy derives from it. */
   posologieModel = signal<PosologieData>({
     doseNumber: null,
     doseLines: [],
@@ -138,7 +161,7 @@ export class ObservanceForm {
    * returns whether that day falls in a treatment or pause phase.
    *
    * The sequences are played in order and the full set repeats indefinitely.
-   * E.g. [5 on / 2 off, 3 on / 1 off] → total cycle = 11 days, then loops.
+   * Ex: [5 on / 2 off, 3 on / 1 off] -> total cycle = 11 days, then loops.
    */
   private getStatusInCycle(daysSinceCycleStart: number, sequences: Sequence[]): DayStatus {
     const totalCycleLength = sequences.reduce((sum, s) => sum + (s.traitement || 0) + (s.pause || 0), 0);
@@ -256,7 +279,6 @@ export class ObservanceForm {
   /**
    * Computes the weighted global observance across all dose lines.
    *
-   * Formula:
    *   Σ( dose_i × (dispensed_i − returned_i) )
    *   ─────────────────────────────────────────
    *   Σ( dose_i × unitPerDay_i × treatmentDays )
@@ -342,6 +364,17 @@ export class ObservanceForm {
     const reelle = line.dispensed - line.returned;
 
     return reelle / theorique;
+  }
+
+  /** Auto-inserts slashes while the user types a date (ddmmyyyy → dd/mm/yyyy). */
+  formatDateInput(event: Event) {
+    if ((event as InputEvent).inputType?.startsWith('delete')) return;
+    const input = event.target as HTMLInputElement;
+    const digits = input.value.replace(/\D/g, '').slice(0, 8);
+    let formatted = digits;
+    if (digits.length > 2) formatted = digits.slice(0, 2) + '/' + digits.slice(2);
+    if (digits.length > 4) formatted = digits.slice(0, 2) + '/' + digits.slice(2, 4) + '/' + digits.slice(4);
+    input.value = formatted;
   }
 
   /** Appends a new empty sequence (up to the 5-sequence limit). */

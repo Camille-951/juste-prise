@@ -96,7 +96,7 @@ input[type="number"] {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px 16px;
-            align-items: center;
+            align-items: start;
 
             .input-with-unit {
                 display: flex;
@@ -107,6 +107,21 @@ input[type="number"] {
             }
 
             > input { min-width: 0; text-align: center; }
+
+            .header-with-hint {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+
+                .hint {
+                    font-size: 0.7rem;
+                    color: #006D77;
+                    text-align: center;
+                    line-height: 1.2;
+                    font-weight: 400;
+                }
+            }
         }
 
         .rythme {

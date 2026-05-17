@@ -12,7 +12,10 @@
 
             <div class="dose-lines">
                 <span class="header">Dosage par unité (cp/gél...)</span>
-                <span class="header">Nb d'unités par jour</span>
+                <div class="header-with-hint">
+                    <span class="header">Nb d'unités par jour</span>
+                    <span class="hint">= [nb d'unités / prise] x [nb de prises / jour]</span>
+                </div>
 
                 @for (line of posologieModel().doseLines; track line.id; let i = $index) {
                 <div class="input-with-unit">
@@ -80,14 +83,15 @@
             <div> <span>Date de dispensation: </span>
                 <mat-form-field subscriptSizing="dynamic">
                     <input matInput [matDatepicker]="dateDispensation" [formField]="posologieForm.dates.dispensation"
-                        disabled>
+                        (input)="formatDateInput($event)" placeholder="jj/mm/aaaa">
                     <mat-datepicker-toggle matSuffix [for]="dateDispensation"></mat-datepicker-toggle>
                     <mat-datepicker #dateDispensation></mat-datepicker>
                 </mat-form-field>
             </div>
             <div> <span>Date de retour: </span>
                 <mat-form-field subscriptSizing="dynamic">
-                    <input matInput [matDatepicker]="dateRetour" [formField]="posologieForm.dates.retour" disabled>
+                    <input matInput [matDatepicker]="dateRetour" [formField]="posologieForm.dates.retour"
+                        (input)="formatDateInput($event)" placeholder="jj/mm/aaaa">
                     <mat-datepicker-toggle matSuffix [for]="dateRetour"></mat-datepicker-toggle>
                     <mat-datepicker #dateRetour></mat-datepicker>
                 </mat-form-field>
@@ -95,7 +99,7 @@
             <div> <span>Date de début de cycle (si connue): </span>
                 <mat-form-field subscriptSizing="dynamic">
                     <input matInput [matDatepicker]="dateDebutCycle" [formField]="posologieForm.dates.debutCycle"
-                        disabled>
+                        (input)="formatDateInput($event)" placeholder="jj/mm/aaaa">
                     <mat-datepicker-toggle matSuffix [for]="dateDebutCycle"></mat-datepicker-toggle>
                     <mat-datepicker #dateDebutCycle></mat-datepicker>
                 </mat-form-field>
