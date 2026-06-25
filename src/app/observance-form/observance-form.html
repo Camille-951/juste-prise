@@ -1,10 +1,13 @@
 <div class="content">
-    <span class="warning">Compléter un nouveau formulaire pour chaque médicament</span>
+    <div class="warning">
+        Compléter un nouveau formulaire pour chaque médicament
+    </div>
+
     <div class="posologie">
         <h2 class="title">POSOLOGIE</h2>
 
         <div class="dose-number">
-            <span>Nombre de dosages différents du même médicament :</span>
+            <span>Nombre de dosages différents du même médicament</span>
             <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.doseNumber" />
         </div>
 
@@ -14,13 +17,13 @@
                 <span class="header">Dosage par unité (cp/gél...)</span>
                 <div class="header-with-hint">
                     <span class="header">Nb d'unités par jour</span>
-                    <span class="hint">= [nb d'unités / prise] x [nb de prises / jour]</span>
+                    <span class="hint">= [nb d'unités / prise] × [nb de prises / jour]</span>
                 </div>
 
                 @for (line of posologieModel().doseLines; track line.id; let i = $index) {
                 <div class="input-with-unit">
                     <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.doseLines[i].dosePerUnit" />
-                    <span>mg</span>
+                    <span class="unit">mg</span>
                 </div>
                 <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.doseLines[i].unitPerDay" />
                 }
@@ -39,11 +42,6 @@
                                 [formField]="posologieForm.rythm.mode" />
                             <label for="discontinu">Discontinu</label>
                         </div>
-
-                        <!-- <div class="checkbox-group">
-                            <input type="checkbox" id="weekends" [formField]="posologieForm.rythm.weekEnd" />
-                            <label for="weekends">Pas de prises le week-end</label>
-                        </div> -->
                     </div>
 
                     <div class="rythme-details" [class.continu]="posologieForm.rythm.mode().value() === 'continu'">
@@ -58,7 +56,7 @@
                             }
                             <div class="input-group">
                                 <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.rythm.sequences[i].traitement" />
-                                <label>Jours de traitement, puis</label>
+                                <label>jours de traitement, puis</label>
                             </div>
                             <div class="input-group">
                                 <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.rythm.sequences[i].pause" />
@@ -79,24 +77,31 @@
 
     <div class="observance">
         <h2 class="title">CALCUL D'OBSERVANCE</h2>
+
         <div class="dates">
-            <div> <span>Date de dispensation: </span>
+            <div class="date-row">
+            <div class="date-group">
+                <label class="date-label">Date de dispensation</label>
                 <mat-form-field subscriptSizing="dynamic">
                     <input matInput [matDatepicker]="dateDispensation" [formField]="posologieForm.dates.dispensation"
-                        (input)="formatDateInput($event)" placeholder="jj/mm/aaaa">
+                        [min]="minDispensationDate" (input)="formatDateInput($event)"
+                        (dateInput)="onDispensationDateChange($event)" placeholder="jj/mm/aaaa">
                     <mat-datepicker-toggle matSuffix [for]="dateDispensation"></mat-datepicker-toggle>
                     <mat-datepicker #dateDispensation></mat-datepicker>
                 </mat-form-field>
             </div>
-            <div> <span>Date de retour: </span>
+            <div class="date-group">
+                <label class="date-label">Date de retour</label>
                 <mat-form-field subscriptSizing="dynamic">
                     <input matInput [matDatepicker]="dateRetour" [formField]="posologieForm.dates.retour"
-                        (input)="formatDateInput($event)" placeholder="jj/mm/aaaa">
+                        [max]="maxRetourDate" (input)="formatDateInput($event)"
+                        (dateInput)="onRetourDateChange($event)" placeholder="jj/mm/aaaa">
                     <mat-datepicker-toggle matSuffix [for]="dateRetour"></mat-datepicker-toggle>
                     <mat-datepicker #dateRetour></mat-datepicker>
                 </mat-form-field>
             </div>
-            <div> <span>Date de début de cycle (si connue): </span>
+            <div class="date-group optional">
+                <label class="date-label">Début de cycle <span class="optional-tag">si connu</span></label>
                 <mat-form-field subscriptSizing="dynamic">
                     <input matInput [matDatepicker]="dateDebutCycle" [formField]="posologieForm.dates.debutCycle"
                         (input)="formatDateInput($event)" placeholder="jj/mm/aaaa">
@@ -104,15 +109,28 @@
                     <mat-datepicker #dateDebutCycle></mat-datepicker>
                 </mat-form-field>
             </div>
-
+            @if (getTreatmentDays() !== null) {
+            <div class="date-group treatment-days-group">
+                <label class="date-label">Jours de prise</label>
+                <span class="treatment-days-value">{{ getTreatmentDays() }} j</span>
+            </div>
+            }
+            </div>
+            @if (dispensationMatcher.hasError) {
+            <span class="date-error">Date de dispensation : ne peut pas être antérieure à 5 ans.</span>
+            }
+            @if (retourMatcher.hasError) {
+            <span class="date-error">Date de retour : maximum 7 mois après la date de dispensation.</span>
+            }
         </div>
+
         <div class="tableau">
             @if (posologieModel().doseLines.length > 0) {
             <div class="table-grid">
-                <span class="header">Dosage par unité de traitement</span>
-                <span class="header">Nb d'unités dispensées</span>
-                <span class="header">Nb théorique d'unités retournées</span>
-                <span class="header">Nb d'unités retournées</span>
+                <span class="header">Dosage</span>
+                <span class="header">Dispensées</span>
+                <span class="header">Théoriques retournées</span>
+                <span class="header">Retournées</span>
                 <span class="header">Observance</span>
 
                 @for (line of posologieModel().doseLines; track line.id; let i = $index) {
@@ -123,16 +141,18 @@
                         <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.doseLines[i].dispensed" placeholder="0" />
                     </div>
                     <div class="theoretical-display">
-                        @if (getTheoreticalReturned(i) !== null) { {{ getTheoreticalReturned(i) }} } @else { - }
+                        @if (getTheoreticalReturned(i) !== null) { {{ getTheoreticalReturned(i) }} } @else { — }
                     </div>
                     <div class="input-labeled returned">
                         <span class="input-label">Retournées</span>
                         <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.doseLines[i].returned" placeholder="0" />
                     </div>
-                    <div class="observance-display" [class.alerte]="getObservance(i) || 0 < 0.8">
+                    <div class="observance-display"
+                         [class.bon]="(getObservance(i) ?? -1) >= 0.8"
+                         [class.alerte]="getObservance(i) !== null && getObservance(i)! < 0.8">
                         @if (getObservance(i) !== null) {
                         {{ getObservance(i) | percent:'1.0-1' }}
-                        } @else { - }
+                        } @else { — }
                     </div>
                 </div>
                 }
@@ -141,11 +161,16 @@
         </div>
 
         @if (getGlobalObservance() !== null) {
-        <div class="observance-globale">
-            <span class="label">Observance globale :</span>
-            <span class="value" [class.alerte]="(getGlobalObservance() ?? 0) < 0.8">
-                {{ getGlobalObservance() | percent:'1.0-1' }}
-            </span>
+        <div class="observance-globale"
+             [class.bon]="(getGlobalObservance() ?? -1) >= 0.8"
+             [class.alerte]="(getGlobalObservance() ?? 0) < 0.8">
+            <div class="observance-globale-content">
+                <span class="label">Observance globale</span>
+                <span class="value">{{ getGlobalObservance() | percent:'1.0-1' }}</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="(getGlobalObservance()! * 100)"></div>
+            </div>
         </div>
         }
 
@@ -158,9 +183,6 @@
                 @if (posologieModel().rythm.mode === 'discontinu') {
                 <span class="legend-item legend-pause">Pause</span>
                 }
-                <!-- @if (posologieModel().rythm.weekEnd) {
-                <span class="legend-item legend-weekend">Week-end exclu</span>
-                } -->
             </div>
 
             <div class="calendar-months-wrapper">

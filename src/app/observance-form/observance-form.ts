@@ -1,7 +1,7 @@
 import { Component, effect, HostListener, signal, untracked } from '@angular/core';
 import { form, FormField } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDatepickerModule, MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { NativeDateAdapter, provideNativeDateAdapter, MAT_DATE_LOCALE, DateAdapter } from '@angular/material/core';
@@ -34,6 +34,10 @@ class MondayFirstDateAdapter extends NativeDateAdapter {
     const mm = String(date.getMonth() + 1).padStart(2, '0');
     return `${dd}/${mm}/${date.getFullYear()}`;
   }
+}
+
+class DateErrorState {
+  hasError = false;
 }
 
 /** Whether a given day is an active treatment day or a pause day. */
@@ -116,6 +120,23 @@ export class ObservanceForm {
   });
 
   posologieForm = form(this.posologieModel);
+
+  dispensationMatcher = new DateErrorState();
+  retourMatcher = new DateErrorState();
+
+  readonly minDispensationDate: Date = (() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 5);
+    return d;
+  })();
+
+  get maxRetourDate(): Date | null {
+    const dispensation = this.posologieModel().dates.dispensation;
+    if (!dispensation) return null;
+    const max = new Date(dispensation);
+    max.setMonth(max.getMonth() + 7);
+    return max;
+  }
 
   constructor() {
     // Keep doseLines in sync with the doseNumber input (max 20 lines).
@@ -221,6 +242,10 @@ export class ObservanceForm {
     const rythm = model.rythm;
 
     if (!dispensation || !retour) return [];
+    if (dispensation < this.minDispensationDate) return [];
+    const maxRetour = new Date(dispensation);
+    maxRetour.setMonth(maxRetour.getMonth() + 7);
+    if (retour > maxRetour) return [];
 
     const days: CalendarDay[] = [];
 
@@ -318,6 +343,16 @@ export class ObservanceForm {
     return numerator / denominator;
   }
 
+  getTreatmentDays(): number | null {
+    const model = this.posologieModel();
+    const { dispensation, retour, debutCycle } = model.dates;
+    const rythm = model.rythm;
+    if (rythm.mode !== 'discontinu') return null;
+    if (!dispensation || !retour) return null;
+    if (!rythm.sequences.every(s => s.traitement !== null && s.pause !== null)) return null;
+    return this.countTreatmentDays(debutCycle ?? dispensation, retour, rythm);
+  }
+
   /** Returns the theoretical number of units the patient should have brought back. */
   getTheoreticalReturned(index: number): number | null {
     const model = this.posologieModel();
@@ -364,6 +399,25 @@ export class ObservanceForm {
     const reelle = line.dispensed - line.returned;
 
     return reelle / theorique;
+  }
+
+  onDispensationDateChange(event: MatDatepickerInputEvent<Date>) {
+    if (event.value && event.value < this.minDispensationDate) {
+      this.dispensationMatcher.hasError = true;
+      this.posologieModel.update(m => ({ ...m, dates: { ...m.dates, dispensation: null } }));
+    } else {
+      this.dispensationMatcher.hasError = false;
+    }
+  }
+
+  onRetourDateChange(event: MatDatepickerInputEvent<Date>) {
+    const max = this.maxRetourDate;
+    if (event.value && max && event.value > max) {
+      this.retourMatcher.hasError = true;
+      this.posologieModel.update(m => ({ ...m, dates: { ...m.dates, retour: null } }));
+    } else {
+      this.retourMatcher.hasError = false;
+    }
   }
 
   /** Auto-inserts slashes while the user types a date (ddmmyyyy → dd/mm/yyyy). */

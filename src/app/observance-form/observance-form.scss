@@ -1,76 +1,117 @@
+// ---- Variables ----
+$primary:        #006D77;
+$primary-light:  #83C5BE;
+$bg:             #EDF6F9;
+$warn:           #D95F5F;
+$warn-light:     #FDEAEA;
+$good:           #2A9D8F;
+$good-light:     #D4EFEC;
+$text:           #1A2B33;
+$text-muted:     #6B8591;
+$border:         #C3E0DC;
+$white:          #ffffff;
+
+// ---- Spinner suppression ----
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
-
 input[type="number"] {
     -moz-appearance: textfield;
     appearance: textfield;
 }
 
+// ---- Root ----
 .content {
-    padding: 8px;
-    background: #EDF6F9;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 16px;
+    background: $bg;
     min-height: calc(100vh - 64px);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 16px;
 
+    // ---- Warning ----
     .warning {
-        background-color: #E29578;
-        border-radius: 12px;
-        padding: 12px 28px;
-        
-    }
-
-    .posologie,
-    .observance {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 12px rgba(0, 109, 119, 0.08);
-        padding: 28px;
         display: flex;
-        flex-direction: column;
-        gap: 24px;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, #E29578, #C9694A);
+        color: $white;
+        border-radius: 10px;
+        padding: 12px 24px;
+        font-weight: 600;
+        font-size: 0.88rem;
+        box-shadow: 0 2px 10px rgba(201, 105, 74, 0.3);
         width: 100%;
         max-width: 1200px;
+        box-sizing: border-box;
+
+        .warning-icon { font-size: 1.1rem; }
     }
 
+    // ---- Cards ----
+    .posologie,
+    .observance {
+        background: $white;
+        border-radius: 14px;
+        box-shadow: 0 2px 20px rgba(0, 109, 119, 0.08);
+        padding: 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+        width: 100%;
+        max-width: 1200px;
+        box-sizing: border-box;
+    }
+
+    // ---- Section title ----
     .title {
-        background-color: #006D77;
-        color: #EDF6F9;
+        background: linear-gradient(135deg, $primary, #009DAA);
+        color: $bg;
         margin: 0;
-        padding: 10px 16px;
+        padding: 11px 20px;
         border-radius: 8px;
-        font-size: 0.95rem;
-        letter-spacing: 1.5px;
+        font-size: 0.82rem;
+        letter-spacing: 2.5px;
+        font-weight: 700;
     }
 
+    // ---- Column headers (table) ----
     .header {
-        background-color: #83C5BE;
-        color: #006D77;
-        font-weight: 600;
-        font-size: 0.85rem;
+        background: rgba($primary-light, 0.25);
+        color: $primary;
+        font-weight: 700;
+        font-size: 0.78rem;
         text-align: center;
         padding: 8px;
         border-radius: 6px;
+        letter-spacing: 0.2px;
     }
 
+    // ---- Inputs ----
     input[type="number"],
     input[type="text"] {
-        border: 1.5px solid #83C5BE;
-        border-radius: 6px;
-        padding: 7px 10px;
+        border: 1.5px solid $border;
+        border-radius: 8px;
+        padding: 8px 12px;
         outline: none;
         font-size: 0.9rem;
-        transition: border-color 0.15s;
-        background: white;
+        font-family: inherit;
+        transition: border-color 0.15s, box-shadow 0.15s;
+        background: $white;
+        color: $text;
 
-        &:focus { border-color: #006D77; }
+        &:focus {
+            border-color: $primary;
+            box-shadow: 0 0 0 3px rgba($primary, 0.12);
+        }
     }
+
+    // ==== POSOLOGIE ====
 
     .posologie {
 
@@ -78,11 +119,13 @@ input[type="number"] {
             display: flex;
             align-items: center;
             gap: 16px;
+            background: $bg;
+            border-radius: 8px;
+            border: 1.5px solid $border;
+            padding: 12px 18px;
 
-            input {
-                width: 60px;
-                text-align: center;
-            }
+            span { font-size: 0.9rem; color: $text; }
+            input { width: 64px; text-align: center; }
         }
 
         .columns-wrapper {
@@ -102,8 +145,14 @@ input[type="number"] {
                 display: flex;
                 align-items: center;
                 gap: 8px;
-
                 input { flex: 1; min-width: 0; text-align: center; }
+            }
+
+            .unit {
+                font-size: 0.8rem;
+                color: $text-muted;
+                font-weight: 500;
+                min-width: 20px;
             }
 
             > input { min-width: 0; text-align: center; }
@@ -115,36 +164,50 @@ input[type="number"] {
                 gap: 4px;
 
                 .hint {
-                    font-size: 0.7rem;
-                    color: #006D77;
+                    font-size: 0.68rem;
+                    color: $primary;
                     text-align: center;
-                    line-height: 1.2;
+                    line-height: 1.3;
                     font-weight: 400;
+                    opacity: 0.8;
                 }
             }
         }
 
         .rythme {
-            .header {
-                display: block;
-            }
+            .header { display: block; }
 
             .rythme-container {
-                padding: 16px;
+                padding: 20px;
                 display: grid;
-                grid-template-columns: 220px minmax(0, 1fr);
+                grid-template-columns: 200px minmax(0, 1fr);
                 gap: 24px;
                 align-items: start;
-                background: #EDF6F9;
-                border-radius: 8px;
+                background: $bg;
+                border-radius: 10px;
+                border: 1.5px solid $border;
                 margin-top: 10px;
             }
 
             .radio-group {
                 display: grid;
                 grid-template-columns: auto 1fr;
-                gap: 12px 8px;
+                gap: 14px 10px;
                 align-items: center;
+
+                input[type="radio"] {
+                    width: 17px;
+                    height: 17px;
+                    accent-color: $primary;
+                    cursor: pointer;
+                    margin: 0;
+                }
+
+                label {
+                    font-size: 0.88rem;
+                    color: $text;
+                    cursor: pointer;
+                }
             }
 
             .rythme-details {
@@ -152,8 +215,8 @@ input[type="number"] {
                 flex-direction: column;
                 gap: 16px;
                 padding-left: 24px;
-                border-left: 2px solid #83C5BE;
-                min-height: 100px;
+                border-left: 2.5px solid $primary-light;
+                min-height: 80px;
 
                 .sequence {
                     display: flex;
@@ -161,8 +224,8 @@ input[type="number"] {
                     gap: 10px;
 
                     & + .sequence {
-                        padding-top: 12px;
-                        border-top: 1px dashed #83C5BE;
+                        padding-top: 14px;
+                        border-top: 1px dashed $primary-light;
                     }
 
                     .seq-header {
@@ -172,239 +235,324 @@ input[type="number"] {
                     }
 
                     .seq-label {
-                        font-size: 0.8rem;
+                        font-size: 0.72rem;
                         font-weight: 700;
-                        color: #83C5BE;
+                        color: $primary-light;
                         text-transform: uppercase;
-                        letter-spacing: 0.5px;
+                        letter-spacing: 0.8px;
                     }
 
                     .remove-seq-btn {
                         background: none;
                         border: none;
                         cursor: pointer;
-                        color: #E29578;
+                        color: $warn;
                         font-size: 0.75rem;
                         padding: 2px 6px;
                         border-radius: 4px;
                         line-height: 1;
-                        &:hover { background: #FFDDD2; }
+                        transition: background 0.15s;
+                        &:hover { background: $warn-light; }
                     }
                 }
 
                 .add-seq-btn {
                     align-self: flex-start;
                     background: none;
-                    border: 1.5px dashed #83C5BE;
+                    border: 1.5px dashed $primary-light;
                     border-radius: 6px;
-                    color: #006D77;
+                    color: $primary;
                     cursor: pointer;
                     font-size: 0.8rem;
                     font-weight: 600;
-                    padding: 6px 12px;
+                    font-family: inherit;
+                    padding: 6px 14px;
                     margin-top: 4px;
-                    &:hover { background: #EDF6F9; border-color: #006D77; }
+                    transition: background 0.15s, border-color 0.15s;
+                    &:hover { background: $bg; border-color: $primary; }
                 }
 
                 .input-group {
                     display: flex;
                     align-items: center;
-                    justify-content: space-between;
                     gap: 12px;
 
                     label {
-                        font-size: 14px;
+                        font-size: 0.87rem;
                         font-weight: 500;
-                        color: #006D77;
+                        color: $primary;
                     }
 
-                    input { width: 50px; text-align: center; }
+                    input { width: 54px; text-align: center; }
                 }
             }
         }
     }
 
+    // ==== OBSERVANCE ====
+
     .observance {
 
+        // ---- Dates ----
         .dates {
             display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            gap: 16px 32px;
+            flex-direction: column;
+            gap: 10px;
+            background: $bg;
+            border-radius: 10px;
+            border: 1.5px solid $border;
+            padding: 20px 24px;
 
-            div {
+            .date-row {
                 display: flex;
-                align-items: center;
-                gap: 8px;
-                font-size: 0.9rem;
-                color: #444;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 20px 32px;
+            }
+
+            .date-group {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+
+                &.optional { opacity: 0.8; }
+            }
+
+            .date-label {
+                font-size: 0.72rem;
+                font-weight: 700;
+                color: $primary;
+                text-transform: uppercase;
+                letter-spacing: 0.6px;
+            }
+
+            .optional-tag {
+                font-size: 0.68rem;
+                color: $text-muted;
+                font-weight: 400;
+                text-transform: none;
+                letter-spacing: 0;
             }
 
             mat-form-field {
-                width: 160px;
+                width: 172px;
                 --mat-form-field-container-height: 36px;
                 --mat-form-field-container-vertical-padding: 6px;
             }
         }
 
-        .tableau {
+        .treatment-days-group {
+            border-left: 2px solid $primary-light;
+            padding-left: 16px;
+        }
 
+        .treatment-days-value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: $primary;
+            line-height: 1;
+            padding-top: 4px;
+        }
+
+        .date-error {
+            font-size: 0.78rem;
+            color: $warn;
+            font-weight: 500;
+        }
+
+        // ---- Tableau ----
+        .tableau {
             .input-label { display: none; }
 
             .table-grid {
                 display: grid;
                 grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-                gap: 10px 16px;
+                gap: 8px 12px;
                 align-items: center;
 
                 .dosage-line { display: contents; }
 
-                .dosage-display {
+                .dosage-display,
+                .theoretical-display {
                     text-align: center;
-                    font-weight: 500;
-                    padding: 9px 10px;
-                    background-color: #EDF6F9;
-                    border-radius: 6px;
-                    border: 1.5px solid #83C5BE;
+                    font-weight: 600;
+                    padding: 10px 8px;
+                    background: $bg;
+                    border-radius: 8px;
+                    border: 1.5px solid $border;
                     font-size: 0.9rem;
+                    color: $text;
                 }
 
                 input { min-width: 0; text-align: center; }
-
                 .input-labeled { justify-self: center; }
-
-                .theoretical-display {
-                    text-align: center;
-                    font-weight: 500;
-                    padding: 9px 10px;
-                    background-color: #EDF6F9;
-                    border-radius: 6px;
-                    border: 1.5px solid #83C5BE;
-                    font-size: 0.9rem;
-                }
 
                 .observance-display {
                     text-align: center;
                     font-weight: 700;
-                    font-size: 1.1em;
-                    color: #006D77;
+                    font-size: 1.05rem;
+                    color: $text-muted;
+                    padding: 10px 8px;
+                    border-radius: 8px;
+                    transition: background 0.2s, color 0.2s;
 
-                    &.alerte { color: #E29578; }
+                    &.bon    { color: $good; background: $good-light; }
+                    &.alerte { color: $warn; background: $warn-light; }
                 }
             }
         }
 
+        // ---- Observance globale ----
         .observance-globale {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 16px;
-            padding: 14px 20px;
-            background: #EDF6F9;
-            border-radius: 8px;
+            border-radius: 12px;
+            padding: 20px 24px 16px;
+            border: 2px solid $border;
+
+            .observance-globale-content {
+                display: flex;
+                align-items: baseline;
+                justify-content: space-between;
+                margin-bottom: 14px;
+            }
 
             .label {
-                font-size: 0.9rem;
+                font-size: 0.85rem;
                 font-weight: 600;
-                color: #444;
+                color: $text-muted;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
             }
 
             .value {
-                font-size: 1.5rem;
-                font-weight: 700;
-                color: #006D77;
+                font-size: 2.2rem;
+                font-weight: 800;
+                color: $primary;
+                letter-spacing: -1px;
+                line-height: 1;
+            }
 
-                &.alerte { color: #E29578; }
+            .progress-bar {
+                height: 6px;
+                background: $border;
+                border-radius: 3px;
+                overflow: hidden;
+
+                .progress-fill {
+                    height: 100%;
+                    background: $primary;
+                    border-radius: 3px;
+                    transition: width 0.5s ease;
+                }
+            }
+
+            &.bon {
+                border-color: rgba($good, 0.4);
+                background: rgba($good-light, 0.4);
+                .value { color: $good; }
+                .progress-fill { background: $good; }
+            }
+
+            &.alerte {
+                border-color: rgba($warn, 0.35);
+                background: rgba($warn-light, 0.5);
+                .value { color: $warn; }
+                .progress-fill { background: $warn; }
             }
         }
 
+        // ---- Calendrier ----
         .calendar-recap {
-            background: #EDF6F9;
-            border-radius: 8px;
-            padding: 20px;
-            align-self: flex-start;
+            background: $bg;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1.5px solid $border;
 
             .calendar-title {
-                font-size: 0.95rem;
-                font-weight: 600;
-                margin: 0 0 12px;
-                color: #006D77;
-                letter-spacing: 0.5px;
+                font-size: 0.78rem;
+                font-weight: 700;
+                margin: 0 0 16px;
+                color: $primary;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
             }
 
             .calendar-legend {
                 display: flex;
-                gap: 16px;
+                gap: 20px;
                 margin-bottom: 20px;
 
                 .legend-item {
                     display: flex;
                     align-items: center;
-                    gap: 6px;
+                    gap: 7px;
                     font-size: 0.8rem;
-                    color: #555;
+                    font-weight: 500;
+                    color: $text-muted;
 
                     &::before {
                         content: '';
-                        width: 14px;
-                        height: 14px;
-                        border-radius: 3px;
+                        width: 12px;
+                        height: 12px;
+                        border-radius: 50%;
                         display: inline-block;
                     }
 
-                    &.legend-prise::before { background: #83C5BE; }
-                    &.legend-pause::before { background: #FFDDD2; }
+                    &.legend-prise::before { background: $primary-light; }
+                    &.legend-pause::before  { background: #FFDDD2; }
                 }
             }
 
             .calendar-months-wrapper {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 20px 32px;
+                gap: 24px 36px;
             }
 
             .calendar-month {
                 .month-label {
                     display: block;
-                    font-size: 0.85rem;
-                    font-weight: 600;
+                    font-size: 0.8rem;
+                    font-weight: 700;
                     text-transform: capitalize;
-                    margin-bottom: 6px;
-                    color: #006D77;
+                    margin-bottom: 8px;
+                    color: $primary;
                 }
 
                 .week-headers,
                 .calendar-grid {
                     display: grid;
-                    grid-template-columns: repeat(7, 34px);
+                    grid-template-columns: repeat(7, 32px);
                     gap: 3px;
                 }
 
                 .week-headers span {
                     text-align: center;
-                    font-size: 0.7rem;
-                    font-weight: 600;
-                    color: #83C5BE;
-                    padding-bottom: 4px;
+                    font-size: 0.62rem;
+                    font-weight: 700;
+                    color: $primary-light;
+                    padding-bottom: 6px;
+                    text-transform: uppercase;
                 }
 
                 .day-cell {
-                    width: 34px;
-                    height: 34px;
-                    border-radius: 6px;
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50%;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    font-size: 0.8rem;
-                    font-weight: 500;
+                    font-size: 0.78rem;
+                    font-weight: 600;
 
-                    &.prise { background: #83C5BE; color: #006D77; }
-                    &.pause { background: #FFDDD2; color: #E29578; }
+                    &.prise { background: $primary-light; color: $primary; }
+                    &.pause { background: #FFDDD2; color: #B05030; }
                 }
             }
         }
     }
 }
+
+// ==== RESPONSIVE ====
 
 @media (max-width: 900px) {
     .content .posologie .columns-wrapper {
@@ -418,7 +566,7 @@ input[type="number"] {
 
     .content .posologie .rythme .rythme-details {
         border-left: none;
-        border-top: 2px solid #83C5BE;
+        border-top: 2.5px solid #83C5BE;
         padding-left: 0;
         padding-top: 16px;
 
@@ -436,11 +584,15 @@ input[type="number"] {
         .dosage-line {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            grid-template-areas: "dosage observance" "dispensed returned" "theoretical theoretical";
+            grid-template-areas:
+                "dosage      observance"
+                "dispensed   returned"
+                "theoretical theoretical";
             gap: 8px;
             background: #EDF6F9;
-            border-radius: 8px;
-            padding: 12px;
+            border-radius: 10px;
+            padding: 14px;
+            border: 1.5px solid #C3E0DC;
 
             .dosage-display          { grid-area: dosage; }
             .input-labeled.dispensed { grid-area: dispensed; }
@@ -452,81 +604,55 @@ input[type="number"] {
                 display: flex;
                 flex-direction: column;
                 gap: 4px;
-
-                input {
-                    width: 100% !important;
-                    min-width: unset !important;
-                    box-sizing: border-box !important;
-                }
+                input { width: 100% !important; min-width: unset !important; box-sizing: border-box !important; }
             }
 
             .input-label {
-                font-size: 0.7rem;
+                font-size: 0.65rem;
                 color: #006D77;
-                font-weight: 600;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.4px;
             }
         }
     }
 }
 
 @media (max-width: 600px) {
-    .content { padding: 12px; }
+    .content { padding: 12px; gap: 12px; }
 
     .content .posologie,
-    .content .observance { padding: 16px; }
+    .content .observance { padding: 16px; gap: 20px; }
 
     .content .posologie .dose-number {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
         gap: 8px;
-        font-size: 0.85rem;
-        flex-wrap: wrap;
-        background: #EDF6F9;
-        border-radius: 8px;
-        padding: 10px 14px;
-
-        span { flex: 1 1 100%; text-align: center; }
-
-        input {
-            width: 60px !important;
-            flex: none !important;
-            min-width: unset !important;
-            margin: 0 auto;
-        }
+        input { width: 64px !important; }
     }
 
     .content .posologie .dose-lines {
-        grid-template-columns: minmax(150px, 1fr) minmax(120px, 1fr);
-        gap: 8px 12px;
-
-        .header { font-size: 0.75rem; }
-        input { width: 70px; justify-self: center; }
+        grid-template-columns: minmax(140px, 1fr) minmax(110px, 1fr);
+        gap: 8px 10px;
+        .header { font-size: 0.73rem; }
     }
 
     .content .observance .dates {
         flex-direction: column;
-        gap: 12px;
-
-        div {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 4px;
-
-            span { font-size: 0.8rem; }
-        }
-
+        gap: 16px;
+        padding: 16px;
         mat-form-field { width: 160px; }
     }
 
-    .content .observance .calendar-recap {
-        .week-headers,
-        .calendar-grid {
-            grid-template-columns: repeat(7, 28px);
-            gap: 2px;
-        }
+    .content .observance .observance-globale .value { font-size: 1.7rem; }
 
-        .day-cell {
-            width: 28px;
-            height: 28px;
-            font-size: 0.7rem;
-        }
+    .content .observance .calendar-recap {
+        padding: 16px;
+
+        .week-headers,
+        .calendar-grid { grid-template-columns: repeat(7, 28px); gap: 2px; }
+
+        .day-cell { width: 28px; height: 28px; font-size: 0.72rem; }
     }
 }
