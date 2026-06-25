@@ -231,13 +231,27 @@ input[type="number"] {
             flex-direction: row;
             flex-wrap: wrap;
             gap: 16px 32px;
+            padding-bottom: 20px;
 
-            div {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                font-size: 0.9rem;
-                color: #444;
+            .date-field {
+                position: relative;
+
+                > div {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    font-size: 0.9rem;
+                    color: #444;
+                }
+            }
+
+            .date-error {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                white-space: nowrap;
+                font-size: 0.75rem;
+                color: #f44336;
             }
 
             mat-form-field {

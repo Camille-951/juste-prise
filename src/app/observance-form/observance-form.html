@@ -80,29 +80,43 @@
     <div class="observance">
         <h2 class="title">CALCUL D'OBSERVANCE</h2>
         <div class="dates">
-            <div> <span>Date de dispensation: </span>
-                <mat-form-field subscriptSizing="dynamic">
-                    <input matInput [matDatepicker]="dateDispensation" [formField]="posologieForm.dates.dispensation"
-                        (input)="formatDateInput($event)" placeholder="jj/mm/aaaa">
-                    <mat-datepicker-toggle matSuffix [for]="dateDispensation"></mat-datepicker-toggle>
-                    <mat-datepicker #dateDispensation></mat-datepicker>
-                </mat-form-field>
+            <div class="date-field">
+                <div> <span>Date de dispensation: </span>
+                    <mat-form-field subscriptSizing="dynamic">
+                        <input matInput [matDatepicker]="dateDispensation" [formField]="posologieForm.dates.dispensation"
+                            [min]="minDispensationDate" (input)="formatDateInput($event)"
+                            (dateInput)="onDispensationDateChange($event)" placeholder="jj/mm/aaaa">
+                        <mat-datepicker-toggle matSuffix [for]="dateDispensation"></mat-datepicker-toggle>
+                        <mat-datepicker #dateDispensation></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                @if (dispensationMatcher.hasError) {
+                <span class="date-error">La date ne peut pas être antérieure à 5 ans.</span>
+                }
             </div>
-            <div> <span>Date de retour: </span>
-                <mat-form-field subscriptSizing="dynamic">
-                    <input matInput [matDatepicker]="dateRetour" [formField]="posologieForm.dates.retour"
-                        (input)="formatDateInput($event)" placeholder="jj/mm/aaaa">
-                    <mat-datepicker-toggle matSuffix [for]="dateRetour"></mat-datepicker-toggle>
-                    <mat-datepicker #dateRetour></mat-datepicker>
-                </mat-form-field>
+            <div class="date-field">
+                <div> <span>Date de retour: </span>
+                    <mat-form-field subscriptSizing="dynamic">
+                        <input matInput [matDatepicker]="dateRetour" [formField]="posologieForm.dates.retour"
+                            [max]="maxRetourDate" (input)="formatDateInput($event)"
+                            (dateInput)="onRetourDateChange($event)" placeholder="jj/mm/aaaa">
+                        <mat-datepicker-toggle matSuffix [for]="dateRetour"></mat-datepicker-toggle>
+                        <mat-datepicker #dateRetour></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                @if (retourMatcher.hasError) {
+                <span class="date-error">La date de retour ne peut pas dépasser 7 mois après la date de dispensation.</span>
+                }
             </div>
-            <div> <span>Date de début de cycle (si connue): </span>
-                <mat-form-field subscriptSizing="dynamic">
-                    <input matInput [matDatepicker]="dateDebutCycle" [formField]="posologieForm.dates.debutCycle"
-                        (input)="formatDateInput($event)" placeholder="jj/mm/aaaa">
-                    <mat-datepicker-toggle matSuffix [for]="dateDebutCycle"></mat-datepicker-toggle>
-                    <mat-datepicker #dateDebutCycle></mat-datepicker>
-                </mat-form-field>
+            <div class="date-field">
+                <div> <span>Date de début de cycle (si connue): </span>
+                    <mat-form-field subscriptSizing="dynamic">
+                        <input matInput [matDatepicker]="dateDebutCycle" [formField]="posologieForm.dates.debutCycle"
+                            (input)="formatDateInput($event)" placeholder="jj/mm/aaaa">
+                        <mat-datepicker-toggle matSuffix [for]="dateDebutCycle"></mat-datepicker-toggle>
+                        <mat-datepicker #dateDebutCycle></mat-datepicker>
+                    </mat-form-field>
+                </div>
             </div>
 
         </div>
