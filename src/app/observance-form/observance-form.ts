@@ -243,7 +243,6 @@ export class ObservanceForm {
 
     if (!dispensation || !retour) return [];
     if (dispensation < this.minDispensationDate) return [];
-
     const maxRetour = new Date(dispensation);
     maxRetour.setMonth(maxRetour.getMonth() + 7);
     if (retour > maxRetour) return [];
@@ -344,6 +343,16 @@ export class ObservanceForm {
     return numerator / denominator;
   }
 
+  getTreatmentDays(): number | null {
+    const model = this.posologieModel();
+    const { dispensation, retour, debutCycle } = model.dates;
+    const rythm = model.rythm;
+    if (rythm.mode !== 'discontinu') return null;
+    if (!dispensation || !retour) return null;
+    if (!rythm.sequences.every(s => s.traitement !== null && s.pause !== null)) return null;
+    return this.countTreatmentDays(debutCycle ?? dispensation, retour, rythm);
+  }
+
   /** Returns the theoretical number of units the patient should have brought back. */
   getTheoreticalReturned(index: number): number | null {
     const model = this.posologieModel();
@@ -395,10 +404,7 @@ export class ObservanceForm {
   onDispensationDateChange(event: MatDatepickerInputEvent<Date>) {
     if (event.value && event.value < this.minDispensationDate) {
       this.dispensationMatcher.hasError = true;
-      this.posologieModel.update(model => ({
-        ...model,
-        dates: { ...model.dates, dispensation: null }
-      }));
+      this.posologieModel.update(m => ({ ...m, dates: { ...m.dates, dispensation: null } }));
     } else {
       this.dispensationMatcher.hasError = false;
     }
@@ -408,10 +414,7 @@ export class ObservanceForm {
     const max = this.maxRetourDate;
     if (event.value && max && event.value > max) {
       this.retourMatcher.hasError = true;
-      this.posologieModel.update(model => ({
-        ...model,
-        dates: { ...model.dates, retour: null }
-      }));
+      this.posologieModel.update(m => ({ ...m, dates: { ...m.dates, retour: null } }));
     } else {
       this.retourMatcher.hasError = false;
     }
