@@ -587,7 +587,7 @@ input[type="number"] {
             grid-template-areas:
                 "dosage      observance"
                 "dispensed   returned"
-                "theoretical theoretical";
+                "theoretical .";
             gap: 8px;
             background: #EDF6F9;
             border-radius: 10px;
@@ -597,7 +597,7 @@ input[type="number"] {
             .dosage-display          { grid-area: dosage; }
             .input-labeled.dispensed { grid-area: dispensed; }
             .input-labeled.returned  { grid-area: returned; }
-            .theoretical-display     { grid-area: theoretical; }
+            .theoretical-display     { grid-area: theoretical; display: flex; flex-direction: column; gap: 4px; align-items: center; }
             .observance-display      { grid-area: observance; }
 
             .input-labeled {

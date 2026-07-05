@@ -127,10 +127,10 @@
         <div class="tableau">
             @if (posologieModel().doseLines.length > 0) {
             <div class="table-grid">
-                <span class="header">Dosage</span>
-                <span class="header">Dispensées</span>
-                <span class="header">Théoriques retournées</span>
-                <span class="header">Retournées</span>
+                <span class="header" title="Dosage par unité de traitement">Dosage par unité</span>
+                <span class="header" title="Nb d'unités dispensées">Unités dispensées</span>
+                <span class="header" title="Nb théorique d'unités retournées">Retour théorique</span>
+                <span class="header" title="Nb d'unités retournées">Unités retournées</span>
                 <span class="header">Observance</span>
 
                 @for (line of posologieModel().doseLines; track line.id; let i = $index) {
@@ -141,6 +141,7 @@
                         <input mat-input type="number" autocomplete="nope" [formField]="posologieForm.doseLines[i].dispensed" placeholder="0" />
                     </div>
                     <div class="theoretical-display">
+                        <span class="input-label">Retour théorique</span>
                         @if (getTheoreticalReturned(i) !== null) { {{ getTheoreticalReturned(i) }} } @else { — }
                     </div>
                     <div class="input-labeled returned">
